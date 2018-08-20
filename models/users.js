@@ -14,8 +14,8 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  name: {type: String, default: ''}
-
+  firstName: {type: String, default: ''},
+  lastName: {type: String, default: ''}
 });
 
 UserSchema.set('toObject', {
