@@ -1,0 +1,57 @@
+Users= {
+  firstname,
+  lastname,
+  username,
+  password,
+  accounts:{
+      id 1,
+      id 2
+  }
+
+}
+
+Accounts= {
+
+    id 1:{
+      name: Netflix
+      website,
+      frequency,
+      billing-history:[2/2018, ]    
+      next-due: {date, amount}
+    },
+
+    id 2: {
+      name:Electricity
+      website,
+      frequency,
+      billing-history:[2/2018, ]    
+      next-due: {date, amount}
+    }
+
+}
+know:current-date
+
+Accounts 
+
+search:-----   filter:[next-due]
+------------------------
+
+
+Netflix           $10
+
+next-due= 3/2018   [pay-now]
+
+            [+]
+==================================
+
+
+Electricity         TBD
+
+next-due= 4/10    [pay-now]
+
+            [+]
+===================================
+
+
+
+
