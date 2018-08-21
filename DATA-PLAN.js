@@ -161,7 +161,7 @@ each user should have 1 array of just bills
     id,
     userId,
     name,
-    website,
+    url,
     bills: [
       {id 1},
       {id 2},

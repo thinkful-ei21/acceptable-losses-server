@@ -1,7 +1,9 @@
+'use strict';
+
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const {User} = require('../models/users');
+const {User} = require('../models/users.js');
 
 const router = express.Router();
 

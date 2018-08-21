@@ -11,8 +11,8 @@ const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
 
-const {router: usersRouter} = require('./routes/users');
-const { router: authRouter, localStrategy, jwtStrategy } = require('./passport/index');
+const { router: usersRouter } = require('./routes/users.js');
+const { router: authRouter, localStrategy, jwtStrategy } = require('./passport/index.js');
 
 
 const app = express();

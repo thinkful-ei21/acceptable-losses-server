@@ -5,6 +5,14 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const UserSchema = mongoose.Schema({
+  firstName: {
+    type: String,
+    default: ''
+  },
+  lastName: {
+    type: String,
+    default: ''
+  },
   username: {
     type: String,
     required: true,
@@ -13,11 +21,10 @@ const UserSchema = mongoose.Schema({
   password: {
     type: String,
     required: true
-  },
-  firstName: {type: String, default: ''},
-  lastName: {type: String, default: ''}
+  }
 });
 
+// Customize output for `res.json(data)`, `console.log(data)` etc.
 UserSchema.set('toObject', {
   virtuals: true,     
   versionKey: false,  
@@ -27,12 +34,13 @@ UserSchema.set('toObject', {
   }
 });
 
+// serialized method, must be called within each res.json()
 UserSchema.methods.serialize = function() {
   return {
-    username: this.username || '',
+    id: this.id,
+    username: this.username,
     firstName: this.firstName || '',
-    lastName: this.lastName || '',
-    id: this.id  || ''
+    lastName: this.lastName || ''
   };
 };
 
@@ -44,6 +52,4 @@ UserSchema.statics.hashPassword = function(password) {
   return bcrypt.hash(password, 10);
 };
 
-const User = mongoose.model('User', UserSchema);
-
-module.exports = {User};
+module.exports = mongoose.model('User', UserSchema);
