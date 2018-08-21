@@ -9,10 +9,8 @@ const AccountSchema = mongoose.Schema({
   name: { type: String, required: true },
   url: { type: String, default: null },
   bills: [{
-    id: { type: mongoose.Schema.Types.ObjectId, ref: 'Bill' },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     isPaid: { type: Boolean, default: false },
-    frequency: { type: String, default: null },
+    frequency: { type: String, required: true },
     dueDate: { type: Date, required: true },
     amount: { type: Number, required: true }
   }]
@@ -41,4 +39,6 @@ AccountSchema.methods.serialize = function() {
   };
 };
 
-module.exports = mongoose.model('Bill', AccountSchema);
+const Account = mongoose.model('Bill', AccountSchema);
+
+module.exports = { Account };

@@ -115,7 +115,7 @@ res
 
 
 in dashboard, user can POST an account
-POST to /bills (protected enpoint)
+POST to /accounts (protected enpoint)
 ----------------------------------
 req
 {
@@ -140,7 +140,7 @@ res
 
 each user should have 1 array of just bills
 
-3 schema:
+2 schema:
 ---------
 
   users:
@@ -149,23 +149,19 @@ each user should have 1 array of just bills
     username,
     password,
 
-  bills:
-    id,
-    userId,
-    boolean of paid,
-    frequency,
-    due date,
-    amount
-
   accounts:
     id,
     userId,
     name,
     url,
     bills: [
-      {id 1},
-      {id 2},
-      ...
+      {
+        id,
+        boolean of paid,
+        frequency,
+        due date,
+        amount,
+      }
     ]
 
 
