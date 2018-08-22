@@ -16,8 +16,26 @@ router.get('/', (req, res, next) => {
   const userId = req.user.id;
   Account.find({userId})
     .then(result => res.json(result))
+    .then(result => result.map(account => {
+      return catchUpBills(account);
+    }))
     .catch(err => next(err));
 });
+
+function catchUpBills(account) {
+  const bills = account.bills;
+  const lastBillDate = moment(bills[bills.length-1].dueDate);
+  const today = moment();
+  while(lastBillDate.isBefore(today)) {
+    lastBillDate.add(1, 'month');
+    bills.push({
+      dueDate: lastBillDate,
+      amount: bills[0].amount
+    })
+  }
+  account.bills = [...bills];
+  return account.save();
+}
 
 // ========== GET a account by ID ====================
 router.get('/:id', (req, res, next) => {
