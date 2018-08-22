@@ -8,9 +8,10 @@ const AccountSchema = mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   name: { type: String, required: true },
   url: { type: String, default: null },
+  frequency: { type: String, required: true },
   bills: [{
     isPaid: { type: Boolean, default: false },
-    frequency: { type: String, required: true },
+    oneTime: { type: Boolean, default: false },
     dueDate: { type: Date, required: true },
     amount: { type: Number, required: true }
   }]
