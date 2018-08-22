@@ -16,9 +16,11 @@ router.get('/', (req, res, next) => {
   const userId = req.user.id;
   Account.find({userId})
     .then(result => res.json(result))
-    .then(result => result.map(account => {
-      return catchUpBills(account);
-    }))
+    .then(accounts => {
+      return Promise.all([...accounts.map(account => {
+        return catchUpBills(account);
+      })]);
+      return accounts
     .catch(err => next(err));
 });
 
@@ -34,7 +36,7 @@ function catchUpBills(account) {
     })
   }
   account.bills = [...bills];
-  return account.save();
+  return account;
 }
 
 // ========== GET a account by ID ====================
