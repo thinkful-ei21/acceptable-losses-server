@@ -13,7 +13,7 @@ const AccountSchema = mongoose.Schema({
     isPaid: { type: Boolean, default: false },
     oneTime: { type: Boolean, default: false },
     dueDate: { type: Date, required: true },
-    amount: { type: Number, required: true }
+    amount: { type: Number }
   }]
 });
 
