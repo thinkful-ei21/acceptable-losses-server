@@ -30,7 +30,7 @@ router.get('/:id', (req, res, next) => {
 // ========== POST (create) a new account ============
 router.post('/', (req, res, next) => {
   const userId = req.user.id;
-  const { name, url, amount, dueDate, frequency } = req.body;
+  const { name, url, amount=0, dueDate, frequency } = req.body;
 
   const newAccount = {
     userId,
