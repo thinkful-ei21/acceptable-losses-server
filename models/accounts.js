@@ -13,7 +13,7 @@ const AccountSchema = mongoose.Schema({
     isPaid: { type: Boolean, default: false },
     oneTime: { type: Boolean, default: false },
     dueDate: { type: Date, required: true },
-    amount: { type: Number }
+    amount: { type: Number, default: 0 }
   },
   bills: [{
     isPaid: { type: Boolean, default: false },
@@ -22,6 +22,9 @@ const AccountSchema = mongoose.Schema({
     amount: { type: Number }
   }]
 });
+
+// Compound index, this makes sure that unique account name applies to only one user
+AccountSchema.index({ name: 1, userId: 1 }, { unique: true });
 
 // Add `createdAt` and `updatedAt` fields
 AccountSchema.set('timestamps', true);

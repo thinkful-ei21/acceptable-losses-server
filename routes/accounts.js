@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const mongoose = require('mongoose');
 const passport = require('passport');
 const moment = require('moment');
 
@@ -35,9 +36,17 @@ router.use('/', jwtAuth);
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+
   return Account
     .find({userId})
-    .then(result => res.json(result))
+    .then(accounts => res.json(accounts))
     .catch(err => next(err));
 });
 
@@ -45,8 +54,23 @@ router.get('/', (req, res, next) => {
 
 /* ================== GET an account by ID =================== */
 router.get('/:id', (req, res, next) => {
+  const userId = req.user.id;
   const accountId = req.params.id;
-  
+
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    const err = new Error();
+    err.message = 'The `accountId` is invalid';
+    err.status = 400;
+    return next(err);
+  }
+
   return Account
     .findById(accountId)
     .then(account => res.json(account))
@@ -72,6 +96,32 @@ router.post('/', (req, res, next) => {
   const userId = req.user.id;
   const { name, url, amount=0, dueDate, frequency } = req.body;
 
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!name) {
+    const err = new Error();
+    err.message = 'Missing `name` in request body';
+    err.status = 400;
+    return next(err);
+  }
+  if (!frequency) {
+    const err = new Error();
+    err.message = 'Missing `frequency` in request body';
+    err.status = 400;
+    return next(err);
+  }
+  if (!dueDate) {
+    const err = new Error();
+    err.message = 'Missing `dueDate` in request body';
+    err.status = 400;
+    return next(err);
+  }
+
   const newAccount = {
     userId,
     name,
@@ -87,15 +137,55 @@ router.post('/', (req, res, next) => {
   return Account
     .create(newAccount)
     .then(result => res.json(result))
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.code === 11000) {
+        err = new Error();
+        err.message = 'Account name already exists';
+        err.status = 400;
+      }
+      next(err);
+    });
 });
 
 
 
 /* ======== PUT (update) an exsiting account properties ========= */
 router.put('/:id', (req, res, next) => {
+  const userId = req.user.id;
   const accountId = req.params.id;
   const { name, url, frequency } = req.body;
+
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    const err = new Error();
+    err.message = 'The `accountId` is invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!name) {
+    const err = new Error();
+    err.message = 'Missing `name` in request body';
+    err.status = 400;
+    return next(err);
+  }
+  if (!url) {
+    const err = new Error();
+    err.message = 'Missing `website` in request body';
+    err.status = 400;
+    return next(err);
+  }
+  if (!frequency) {
+    const err = new Error();
+    err.message = 'Missing `frequency` in request body';
+    err.status = 400;
+    return next(err);
+  }
 
   return Account
     .findById(accountId)
@@ -110,7 +200,14 @@ router.put('/:id', (req, res, next) => {
         .save()
         .then(account => res.status(201).json(account));
     })
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.code === 11000) {
+        err = new Error();
+        err.message = 'Account name already exists';
+        err.status = 400;
+      }
+      next(err);
+    });
 });
 
 
@@ -148,6 +245,20 @@ router.put('/bills/:id', (req, res, next) => {
 router.delete('/:id', (req, res, next) => {
   const userId = req.user.id;
   const accountId = req.params.id;
+
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    const err = new Error();
+    err.message = 'The `accountId` is invalid';
+    err.status = 400;
+    return next(err);
+  }
 
   return Account
     .findOneAndRemove({_id: accountId, userId})

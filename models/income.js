@@ -7,8 +7,11 @@ mongoose.Promise = global.Promise;
 const IncomeSchema = mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   source: { type: String, required: true },
-  amount: { type: Number, required: true }
+  amount: { type: Number, required: true, default: 0 }
 });
+
+// Compound index, this makes sure that unique income source applies to only one user
+IncomeSchema.index({ source: 1, userId: 1 }, { unique: true });
 
 // Add `createdAt` and `updatedAt` fields
 IncomeSchema.set('timestamps', true);

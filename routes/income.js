@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const mongoose = require('mongoose');
 const passport = require('passport');
 
 const { Income } = require('../models/income.js');
@@ -17,9 +18,17 @@ router.use('/', jwtAuth);
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+
   return Income
     .find({userId})
-    .then(result => res.json(result))
+    .then(income => res.json(income))
     .catch(err => next(err));
 });
 
@@ -27,11 +36,26 @@ router.get('/', (req, res, next) => {
 
 /* ================== GET an income by ID =================== */
 router.get('/:id', (req, res, next) => {
+  const userId = req.user.id;
   const incomeId = req.params.id;
-  
+
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!mongoose.Types.ObjectId.isValid(incomeId)) {
+    const err = new Error();
+    err.message = 'The `incomeId` is invalid';
+    err.status = 400;
+    return next(err);
+  }
+
   return Income
     .findById(incomeId)
-    .then(account => res.json(account))
+    .then(income => res.json(income))
     .catch(err => next(err));
 });
 
@@ -42,6 +66,20 @@ router.post('/', (req, res, next) => {
   const userId = req.user.id;
   const { source, amount=0 } = req.body;
 
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!source) {
+    const err = new Error();
+    err.message = 'Missing `source` in request body';
+    err.status = 400;
+    return next(err);
+  }
+
   const newIncome = {
     userId,
     source,
@@ -50,16 +88,44 @@ router.post('/', (req, res, next) => {
 
   return Income
     .create(newIncome)
-    .then(result => res.json(result))
-    .catch(err => next(err));
+    .then(income => res.json(income))
+    .catch(err => {
+      if (err.code === 11000) {
+        err = new Error();
+        err.message = 'Income name already exists';
+        err.status = 400;
+      }
+      next(err);
+    });
 });
 
 
 
 /* =============== PUT (update) an existing income ================ */
 router.put('/:id', (req, res, next) => {
+  const userId = req.user.id;
   const incomeId = req.params.id;
-  const { source, amount } = req.body;
+  const { source, amount=0 } = req.body;
+
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!mongoose.Types.ObjectId.isValid(incomeId)) {
+    const err = new Error();
+    err.message = 'The `incomeId` is invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!source) {
+    const err = new Error();
+    err.message = 'Missing `source` in request body';
+    err.status = 400;
+    return next(err);
+  }
 
   const updateIncome = {
     source,
@@ -69,7 +135,14 @@ router.put('/:id', (req, res, next) => {
   return Income
     .findByIdAndUpdate(incomeId, updateIncome, {new: true})
     .then(income => res.status(201).json(income))
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.code === 11000) {
+        err = new Error();
+        err.message = 'Income name already exists';
+        err.status = 400;
+      }
+      next(err);
+    });
 });
 
 
@@ -78,6 +151,20 @@ router.put('/:id', (req, res, next) => {
 router.delete('/:id', (req, res, next) => {
   const userId = req.user.id;
   const incomeId = req.params.id;
+
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.message = 'The `userId` is missing or invalid';
+    err.status = 400;
+    return next(err);
+  }
+  if (!mongoose.Types.ObjectId.isValid(incomeId)) {
+    const err = new Error();
+    err.message = 'The `incomeId` is invalid';
+    err.status = 400;
+    return next(err);
+  }
 
   return Income
     .findOneAndRemove({_id: incomeId, userId})
