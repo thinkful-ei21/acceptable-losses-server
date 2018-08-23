@@ -92,8 +92,31 @@ router.post('/', (req, res, next) => {
 
 
 
-/* ====== PUT (update) an exsiting account with a new bill ====== */
+/* ======== PUT (update) an exsiting account properties ========= */
 router.put('/:id', (req, res, next) => {
+  const accountId = req.params.id;
+  const { name, url, frequency } = req.body;
+
+  return Account
+    .findById(accountId)
+    .then(result => {
+      const account = result;
+
+      account.name = name;
+      account.url = url;
+      account.frequency = frequency;
+
+      return account
+        .save()
+        .then(account => res.status(201).json(account));
+    })
+    .catch(err => next(err));
+});
+
+
+
+/* ======== PUT (update) bills within an existing account ======== */
+router.put('/bills/:id', (req, res, next) => {
   const accountId = req.params.id;
   const { amount=0 } = req.body;
   
@@ -119,7 +142,6 @@ router.put('/:id', (req, res, next) => {
     })
     .catch(err => next(err));
 });
-
 
 
 /* ============ DELETE (delete) an exsiting bill ================ */

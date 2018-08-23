@@ -40,11 +40,11 @@ router.get('/:id', (req, res, next) => {
 /* =============== POST (create) a new income ================ */
 router.post('/', (req, res, next) => {
   const userId = req.user.id;
-  const { name, amount=0 } = req.body;
+  const { source, amount=0 } = req.body;
 
   const newIncome = {
     userId,
-    name,
+    source,
     amount
   };
 
@@ -59,10 +59,10 @@ router.post('/', (req, res, next) => {
 /* =============== PUT (update) an existing income ================ */
 router.put('/:id', (req, res, next) => {
   const incomeId = req.params.id;
-  const { name, amount } = req.body;
+  const { source, amount } = req.body;
 
   const updateIncome = {
-    name,
+    source,
     amount
   };
 

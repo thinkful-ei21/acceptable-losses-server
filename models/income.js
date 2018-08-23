@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 
 const IncomeSchema = mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  name: { type: String, required: true },
+  source: { type: String, required: true },
   amount: { type: Number, required: true }
 });
 
@@ -27,7 +27,7 @@ IncomeSchema.methods.serialize = function() {
   return {
     userId: this.userId,
     id: this.id,
-    name: this.name,
+    source: this.source,
     amount: this.amount
   };
 };
