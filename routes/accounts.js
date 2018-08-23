@@ -30,6 +30,7 @@ router.use('/', jwtAuth);
 // }
 
 
+
 /* ================ GET (read) all accounts ================== */
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
@@ -76,6 +77,7 @@ router.post('/', (req, res, next) => {
     name,
     url,
     frequency,
+    nextDue: { dueDate, amount },
     bills: [{
       dueDate,
       amount
@@ -109,6 +111,7 @@ router.put('/:id', (req, res, next) => {
 
       currBill.isPaid = true;
       account.bills = [...account.bills, newBill];
+      account.nextDue = newBill;
 
       return account
         .save()
@@ -132,72 +135,4 @@ router.delete('/:id', (req, res, next) => {
 
 
 
-module.exports = {router};
-
-
-
-/*
-
-username: floridaman789
-password: password123
-userId: 5b7dcc92e858ec15013b335f
-authToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWI3ZGNjOTJlODU4ZWMxNTAxM2IzMzVmIiwidXNlcm5hbWUiOiJmbG9yaWRhbWFuNzg5IiwiZmlyc3ROYW1lIjoiIiwibGFzdE5hbWUiOiIifSwiaWF0IjoxNTM0OTcxMDY5LCJleHAiOjE1MzU1NzU4NjksInN1YiI6ImZsb3JpZGFtYW43ODkifQ.h1_hXxZmJSBKuzVVUP1THje4mEJfCY8jjuQmPxk-3OQ
-sample accounts:
-[
-    {
-        "url": "www.netflix.com",
-        "userId": "5b7dcc92e858ec15013b335f",
-        "name": "Netflix",
-        "frequency": "monthly",
-        "bills": [
-            {
-                "isPaid": false,
-                "oneTime": false,
-                "_id": "5b7dcdaae858ec15013b3361",
-                "dueDate": "2017-08-22T20:53:00.000Z",
-                "amount": 0
-            }
-        ],
-        "createdAt": "2018-08-22T20:55:06.739Z",
-        "updatedAt": "2018-08-22T20:55:06.739Z",
-        "id": "5b7dcdaae858ec15013b3360"
-    },
-    {
-        "url": "www.pge.com",
-        "userId": "5b7dcc92e858ec15013b335f",
-        "name": "PG&E",
-        "frequency": "monthly",
-        "bills": [
-            {
-                "isPaid": false,
-                "oneTime": false,
-                "_id": "5b7dcdc3e858ec15013b3363",
-                "dueDate": "2018-02-22T20:53:00.000Z",
-                "amount": 0
-            }
-        ],
-        "createdAt": "2018-08-22T20:55:31.719Z",
-        "updatedAt": "2018-08-22T20:55:31.719Z",
-        "id": "5b7dcdc3e858ec15013b3362"
-    },
-    {
-        "url": "www.att.com",
-        "userId": "5b7dcc92e858ec15013b335f",
-        "name": "AT&T",
-        "frequency": "monthly",
-        "bills": [
-            {
-                "isPaid": false,
-                "oneTime": false,
-                "_id": "5b7dce0fe858ec15013b3365",
-                "dueDate": "2018-05-22T20:53:00.000Z",
-                "amount": 100
-            }
-        ],
-        "createdAt": "2018-08-22T20:56:47.841Z",
-        "updatedAt": "2018-08-22T20:56:47.841Z",
-        "id": "5b7dce0fe858ec15013b3364"
-    }
-]
-
-*/
+module.exports = { router };

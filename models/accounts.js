@@ -9,6 +9,12 @@ const AccountSchema = mongoose.Schema({
   name: { type: String, required: true },
   url: { type: String, default: null },
   frequency: { type: String, required: true },
+  nextDue: { 
+    isPaid: { type: Boolean, default: false },
+    oneTime: { type: Boolean, default: false },
+    dueDate: { type: Date, required: true },
+    amount: { type: Number }
+  },
   bills: [{
     isPaid: { type: Boolean, default: false },
     oneTime: { type: Boolean, default: false },
@@ -40,6 +46,6 @@ AccountSchema.methods.serialize = function() {
   };
 };
 
-const Account = mongoose.model('Bill', AccountSchema);
+const Account = mongoose.model('Account', AccountSchema);
 
 module.exports = { Account };
