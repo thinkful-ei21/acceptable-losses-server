@@ -9,7 +9,7 @@ const AccountSchema = mongoose.Schema({
   name: { type: String, required: true },
   url: { type: String, default: null },
   frequency: { type: String, required: true },
-  nextDue: { 
+  nextDue: {
     isPaid: { type: Boolean, default: false },
     oneTime: { type: Boolean, default: false },
     dueDate: { type: Date, required: true },
