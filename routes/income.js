@@ -88,7 +88,7 @@ router.post('/', (req, res, next) => {
 
   return Income
     .find({userId, source})
-    .count()
+    .countDocuments()
     .then(count => {
       if (count > 0) {
         return Promise.reject({
@@ -164,7 +164,7 @@ router.put('/:id', (req, res, next) => {
       if (income.source !== updateIncome.source) {
         return Income
           .find({userId, source})
-          .count()
+          .countDocuments()
           .then(count => {
             if (count > 0) {
               return Promise.reject({

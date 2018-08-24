@@ -140,7 +140,9 @@ router.post('/', (req, res, next) => {
     .catch(err => {
       if (err.code === 11000) {
         err = new Error();
+        err.reason = 'ValidationError';
         err.message = 'Account name already exists';
+        err.location = 'name';
         err.status = 400;
       }
       next(err);
