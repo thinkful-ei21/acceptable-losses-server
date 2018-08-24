@@ -173,6 +173,7 @@ router.put('/:id', (req, res, next) => {
           })
       }
     })
+    .then(income => res.status(201).json(income))
     .catch(err => {
       if (err.reason === 'Validation Error') {
         return res.status(err.code).json(err);
