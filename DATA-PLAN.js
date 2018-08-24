@@ -1,9 +1,9 @@
 /*
 
-username: floridaman03
+username: floridaman04
 password: password123
-userId: 5b7f2b5d6bddb41da6848019
-authToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWI3ZjJiNWQ2YmRkYjQxZGE2ODQ4MDE5IiwidXNlcm5hbWUiOiJmbG9yaWRhbWFuMDMiLCJmaXJzdE5hbWUiOiJGbG9yaWRhIiwibGFzdE5hbWUiOiJNYW4ifSwiaWF0IjoxNTM1MDYwODQ5LCJleHAiOjE1MzU2NjU2NDksInN1YiI6ImZsb3JpZGFtYW4wMyJ9.q6w-k7_LV9pvwdGuBbBox7QksJnTjxJnz7WcPc4O1H0
+userId: 5b8029626d0d6420277028d5
+authToken: 
 sample accounts:
 sample income:
 

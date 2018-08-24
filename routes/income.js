@@ -14,7 +14,7 @@ router.use('/', jwtAuth);
 
 
 
-/* ================ GET (read) all income ================== */
+/* =================== GET (read) all income =================== */
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
@@ -34,7 +34,7 @@ router.get('/', (req, res, next) => {
 
 
 
-/* ================== GET an income by ID =================== */
+/* ===================== GET an income by ID ===================== */
 router.get('/:id', (req, res, next) => {
   const userId = req.user.id;
   const incomeId = req.params.id;
@@ -61,7 +61,7 @@ router.get('/:id', (req, res, next) => {
 
 
 
-/* =============== POST (create) a new income ================ */
+/* ================= POST (create) a new income ================== */
 router.post('/', (req, res, next) => {
   const userId = req.user.id;
   const { source, amount=0 } = req.body;
@@ -87,21 +87,45 @@ router.post('/', (req, res, next) => {
   };
 
   return Income
-    .create(newIncome)
+    .find({userId, source})
+    .count()
+    .then(count => {
+      console.log(count);
+      if (count > 0) {
+        return Promise.reject({
+          code: 422,
+          reason: 'Validation Error',
+          message: 'Income source already exists',
+          location: 'source'
+        });
+      }
+      return Income.create(newIncome);
+    })
     .then(income => res.json(income))
     .catch(err => {
-      if (err.code === 11000) {
-        err = new Error();
-        err.message = 'Income name already exists';
-        err.status = 400;
+      if (err.reason === 'Validation Error') {
+        return res.status(err.code).json(err);
       }
-      next(err);
+      res.status(500).json({code: 500, message: 'Internal server error'});
     });
+
+  // original way to create, but compound index isn't working
+  // return Income
+  //   .create(newIncome)
+  //   .then(income => res.json(income))
+  //   .catch(err => {
+  //     if (err.code === 11000) {
+  //       err = new Error();
+  //       err.message = 'Income name already exists';
+  //       err.status = 400;
+  //     }
+  //     next(err);
+  //   });
 });
 
 
 
-/* =============== PUT (update) an existing income ================ */
+/* =============== PUT (update) an existing income =============== */
 router.put('/:id', (req, res, next) => {
   const userId = req.user.id;
   const incomeId = req.params.id;
@@ -147,7 +171,7 @@ router.put('/:id', (req, res, next) => {
 
 
 
-/* ============ DELETE (delete) an exsiting income ================ */
+/* ============ DELETE (delete) an exsiting income =============== */
 router.delete('/:id', (req, res, next) => {
   const userId = req.user.id;
   const incomeId = req.params.id;

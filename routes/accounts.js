@@ -230,6 +230,7 @@ router.put('/bills/:id', (req, res, next) => {
       };
 
       currBill.isPaid = true;
+      currBill.datePaid = moment().format();
       account.bills = [...account.bills, newBill];
       account.nextDue = newBill;
 
