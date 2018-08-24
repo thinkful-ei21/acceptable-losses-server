@@ -90,7 +90,6 @@ router.post('/', (req, res, next) => {
     .find({userId, source})
     .count()
     .then(count => {
-      console.log(count);
       if (count > 0) {
         return Promise.reject({
           code: 422,
@@ -106,7 +105,10 @@ router.post('/', (req, res, next) => {
       if (err.reason === 'Validation Error') {
         return res.status(err.code).json(err);
       }
-      res.status(500).json({code: 500, message: 'Internal server error'});
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
     });
 
   // original way to create, but compound index isn't working
@@ -156,12 +158,15 @@ router.put('/:id', (req, res, next) => {
     amount
   };
 
-  return Income.findById(incomeId)
+  return Income
+    .find({userId, incomeId})
     .then(income => {
-      if(income.source !== updateIncome.source) {
-        return Income.find({source}).count()
+      if (income.source !== updateIncome.source) {
+        return Income
+          .find({userId, source})
+          .count()
           .then(count => {
-            if(count > 0) {
+            if (count > 0) {
               return Promise.reject({
                 code: 422,
                 reason: 'Validation Error',
@@ -170,7 +175,7 @@ router.put('/:id', (req, res, next) => {
               });
             }
             return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
-          })
+          });
       }
       return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
     })
@@ -179,9 +184,13 @@ router.put('/:id', (req, res, next) => {
       if (err.reason === 'Validation Error') {
         return res.status(err.code).json(err);
       }
-      res.status(500).json({code: 500, message: 'Internal server error'});
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
     });
 
+  // original way to update, but compound index isn't working
   // return Income
   //   .findByIdAndUpdate(incomeId, updateIncome, {new: true})
   //   .then(income => res.status(201).json(income))

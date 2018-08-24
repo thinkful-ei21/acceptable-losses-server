@@ -153,7 +153,7 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const userId = req.user.id;
   const accountId = req.params.id;
-  const { name, url, frequency } = req.body;
+  const { name, url=null, frequency } = req.body;
 
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
@@ -171,12 +171,6 @@ router.put('/:id', (req, res, next) => {
   if (!name) {
     const err = new Error();
     err.message = 'Missing `name` in request body';
-    err.status = 400;
-    return next(err);
-  }
-  if (!url) {
-    const err = new Error();
-    err.message = 'Missing `website` in request body';
     err.status = 400;
     return next(err);
   }
