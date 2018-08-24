@@ -156,17 +156,41 @@ router.put('/:id', (req, res, next) => {
     amount
   };
 
-  return Income
-    .findByIdAndUpdate(incomeId, updateIncome, {new: true})
-    .then(income => res.status(201).json(income))
-    .catch(err => {
-      if (err.code === 11000) {
-        err = new Error();
-        err.message = 'Income name already exists';
-        err.status = 400;
+  return Income.findById(incomeId)
+    .then(income => {
+      if(income.source !== updateIncome.source) {
+        return Income.find({source}).count()
+          .then(count => {
+            if(count > 0) {
+              return Promise.reject({
+                code: 422,
+                reason: 'Validation Error',
+                message: 'Income source already exists',
+                location: 'source'
+              });
+            }
+            return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
+          })
       }
-      next(err);
+    })
+    .catch(err => {
+      if (err.reason === 'Validation Error') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({code: 500, message: 'Internal server error'});
     });
+
+  // return Income
+  //   .findByIdAndUpdate(incomeId, updateIncome, {new: true})
+  //   .then(income => res.status(201).json(income))
+  //   .catch(err => {
+  //     if (err.code === 11000) {
+  //       err = new Error();
+  //       err.message = 'Income name already exists';
+  //       err.status = 400;
+  //     }
+  //     next(err);
+  //   });
 });
 
 
