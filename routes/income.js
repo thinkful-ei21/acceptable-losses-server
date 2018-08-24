@@ -172,6 +172,7 @@ router.put('/:id', (req, res, next) => {
             return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
           })
       }
+      return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
     })
     .then(income => res.status(201).json(income))
     .catch(err => {
