@@ -263,16 +263,30 @@ router.put('/bills/:id', (req, res, next) => {
     .findById(accountId)
     .then(result => {
       const account = result;
+
       const currBill = result.bills[result.bills.length - 1];
-      const interval = 1; // account.frequency if monthly then interval = 1
+      currBill.isPaid = true;
+      currBill.datePaid = moment().format();
+
+      let interval;
+      if (account.frequency === 'monthly') {
+        interval = 1;
+      }
+      if (account.frequency === 'quarterly') {
+        interval = 3;
+      }
+      if (account.frequency === 'semi-annually') {
+        interval = 6;
+      }
+      if (account.frequency === 'annually') {
+        interval = 12;
+      }
 
       const newBill = {
         dueDate: moment(currBill.dueDate).add(interval, 'month'),
         amount
       };
 
-      currBill.isPaid = true;
-      currBill.datePaid = moment().format();
       account.bills = [...account.bills, newBill];
       account.nextDue = newBill;
 
