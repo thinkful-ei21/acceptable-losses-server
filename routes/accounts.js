@@ -13,23 +13,6 @@ const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: tr
 
 router.use('/', jwtAuth);
 
-// helper function for post MVP feature: updates all bills to current
-// function catchUpBills(account) {
-//   const bills = account.bills;
-//   const lastBillDate = moment(bills[bills.length-1].dueDate);
-//   const today = moment();
-//   while(lastBillDate.isBefore(today)) {
-//     console.log(lastBillDate);
-//     lastBillDate.add(1, 'month');
-//     bills.push({
-//       dueDate: lastBillDate,
-//       amount: bills[0].amount
-//     });
-//   }
-//   account.bills = [...bills];
-//   return account.save();
-// }
-
 
 
 /* ================ GET (read) all accounts ================== */
@@ -39,7 +22,9 @@ router.get('/', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
@@ -60,13 +45,17 @@ router.get('/:id', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!mongoose.Types.ObjectId.isValid(accountId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `accountId` is invalid';
+    err.location = 'accountId';
     err.status = 400;
     return next(err);
   }
@@ -77,7 +66,27 @@ router.get('/:id', (req, res, next) => {
     .catch(err => next(err));
 });
 
-// post MVP feature: adds bills array x times based on current login time
+
+
+/* post MVP feature: adds bills array x times based on current login time */
+
+// helper function for post MVP feature: updates all bills to current
+// function catchUpBills(account) {
+//   const bills = account.bills;
+//   const lastBillDate = moment(bills[bills.length-1].dueDate);
+//   const today = moment();
+//   while(lastBillDate.isBefore(today)) {
+//     console.log(lastBillDate);
+//     lastBillDate.add(1, 'month');
+//     bills.push({
+//       dueDate: lastBillDate,
+//       amount: bills[0].amount
+//     });
+//   }
+//   account.bills = [...bills];
+//   return account.save();
+// }
+
 // router.get('/:id', (req, res, next) => {
 //   const accountId = req.params.id;
 //   Account.findById(accountId)
@@ -99,25 +108,33 @@ router.post('/', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!name) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'Missing `name` in request body';
+    err.location = 'name';
     err.status = 400;
     return next(err);
   }
   if (!frequency) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'Missing `frequency` in request body';
+    err.location = 'frequency';
     err.status = 400;
     return next(err);
   }
   if (!dueDate) {
     const err = new Error();
+    err.reason = 'ValidsationError';
     err.message = 'Missing `dueDate` in request body';
+    err.location = 'dueDate';
     err.status = 400;
     return next(err);
   }
@@ -160,25 +177,33 @@ router.put('/:id', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!mongoose.Types.ObjectId.isValid(accountId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `accountId` is invalid';
+    err.location = 'accountId';
     err.status = 400;
     return next(err);
   }
   if (!name) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'Missing `name` in request body';
+    err.location = 'name';
     err.status = 400;
     return next(err);
   }
   if (!frequency) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'Missing `frequency` in request body';
+    err.location = 'frequency';
     err.status = 400;
     return next(err);
   }
@@ -212,9 +237,28 @@ router.put('/:id', (req, res, next) => {
 
 /* ======== PUT (update) bills within an existing account ======== */
 router.put('/bills/:id', (req, res, next) => {
+  const userId = req.user.id;
   const accountId = req.params.id;
   const { amount=0 } = req.body;
   
+  /* Validate fields in request body */
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error();
+    err.reason = 'ValidationError';
+    err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
+    err.status = 400;
+    return next(err);
+  }
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    const err = new Error();
+    err.reason = 'ValidationError';
+    err.message = 'The `accountId` is invalid';
+    err.location = 'accountId';
+    err.status = 400;
+    return next(err);
+  }
+
   return Account
     .findById(accountId)
     .then(result => {
@@ -240,6 +284,7 @@ router.put('/bills/:id', (req, res, next) => {
 });
 
 
+
 /* ============ DELETE (delete) an exsiting bill ================ */
 router.delete('/:id', (req, res, next) => {
   const userId = req.user.id;
@@ -248,13 +293,17 @@ router.delete('/:id', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!mongoose.Types.ObjectId.isValid(accountId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `accountId` is invalid';
+    err.location = 'accountId';
     err.status = 400;
     return next(err);
   }

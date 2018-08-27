@@ -21,7 +21,9 @@ router.get('/', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
@@ -42,13 +44,17 @@ router.get('/:id', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!mongoose.Types.ObjectId.isValid(incomeId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `incomeId` is invalid';
+    err.location = 'incomeId';
     err.status = 400;
     return next(err);
   }
@@ -69,13 +75,17 @@ router.post('/', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!source) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'Missing `source` in request body';
+    err.location = 'source';
     err.status = 400;
     return next(err);
   }
@@ -93,7 +103,7 @@ router.post('/', (req, res, next) => {
       if (count > 0) {
         return Promise.reject({
           code: 422,
-          reason: 'Validation Error',
+          reason: 'ValidationError',
           message: 'Income source already exists',
           location: 'source'
         });
@@ -102,7 +112,7 @@ router.post('/', (req, res, next) => {
     })
     .then(income => res.json(income))
     .catch(err => {
-      if (err.reason === 'Validation Error') {
+      if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
       res.status(500).json({
@@ -111,14 +121,16 @@ router.post('/', (req, res, next) => {
       });
     });
 
-  // original way to create, but compound index isn't working
+  // original way to create if mongoose compound index works
   // return Income
   //   .create(newIncome)
   //   .then(income => res.json(income))
   //   .catch(err => {
   //     if (err.code === 11000) {
   //       err = new Error();
-  //       err.message = 'Income name already exists';
+  //       err.reason = 'ValidationError';
+  //       err.message = 'Income source already exists';
+  //       err.location = 'source';
   //       err.status = 400;
   //     }
   //     next(err);
@@ -136,19 +148,25 @@ router.put('/:id', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!mongoose.Types.ObjectId.isValid(incomeId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `incomeId` is invalid';
+    err.location = 'incomeId';
     err.status = 400;
     return next(err);
   }
   if (!source) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'Missing `source` in request body';
+    err.location = 'source';
     err.status = 400;
     return next(err);
   }
@@ -159,9 +177,12 @@ router.put('/:id', (req, res, next) => {
   };
 
   return Income
-    .find({userId, incomeId})
+    .findById(incomeId)
     .then(income => {
-      if (income.source !== updateIncome.source) {
+      if (income.source === updateIncome.source) {
+        return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
+      }
+      else if (income.source !== updateIncome.source) {
         return Income
           .find({userId, source})
           .countDocuments()
@@ -169,7 +190,7 @@ router.put('/:id', (req, res, next) => {
             if (count > 0) {
               return Promise.reject({
                 code: 422,
-                reason: 'Validation Error',
+                reason: 'ValidationError',
                 message: 'Income source already exists',
                 location: 'source'
               });
@@ -177,11 +198,10 @@ router.put('/:id', (req, res, next) => {
             return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
           });
       }
-      return Income.findByIdAndUpdate(incomeId, updateIncome, {new: true});
     })
     .then(income => res.status(201).json(income))
     .catch(err => {
-      if (err.reason === 'Validation Error') {
+      if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
       res.status(500).json({
@@ -190,14 +210,16 @@ router.put('/:id', (req, res, next) => {
       });
     });
 
-  // original way to update, but compound index isn't working
+  // original way to update if mongoose compound index works
   // return Income
   //   .findByIdAndUpdate(incomeId, updateIncome, {new: true})
   //   .then(income => res.status(201).json(income))
   //   .catch(err => {
   //     if (err.code === 11000) {
   //       err = new Error();
-  //       err.message = 'Income name already exists';
+  //       err.reason = 'ValidationError';
+  //       err.message = 'Income source already exists';
+  //       err.location = 'source';
   //       err.status = 400;
   //     }
   //     next(err);
@@ -214,13 +236,17 @@ router.delete('/:id', (req, res, next) => {
   /* Validate fields in request body */
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `userId` is missing or invalid';
+    err.location = 'userId';
     err.status = 400;
     return next(err);
   }
   if (!mongoose.Types.ObjectId.isValid(incomeId)) {
     const err = new Error();
+    err.reason = 'ValidationError';
     err.message = 'The `incomeId` is invalid';
+    err.location = 'incomeId';
     err.status = 400;
     return next(err);
   }
