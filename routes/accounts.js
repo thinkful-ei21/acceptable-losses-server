@@ -272,16 +272,16 @@ router.put('/bills/:id', (req, res, next) => {
       currBill.datePaid = moment().format();
 
       let interval;
-      if (account.frequency === 'monthly') {
+      if (account.frequency === 'Monthly') {
         interval = 1;
       }
-      if (account.frequency === 'quarterly') {
+      if (account.frequency === 'Quarterly') {
         interval = 3;
       }
-      if (account.frequency === 'semi-annually') {
+      if (account.frequency === 'Semi-Annually') {
         interval = 6;
       }
-      if (account.frequency === 'annually') {
+      if (account.frequency === 'Annually') {
         interval = 12;
       }
 
