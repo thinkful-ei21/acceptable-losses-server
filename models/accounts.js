@@ -9,11 +9,12 @@ const AccountSchema = mongoose.Schema({
   name: { type: String, required: true },
   url: { type: String, default: null },
   frequency: { type: String, required: true },
+  reminder: { type: Number, default: null},
   nextDue: {
     isPaid: { type: Boolean, default: false },
     oneTime: { type: Boolean, default: false },
     dueDate: { type: Date, required: true },
-    datePaid: { type: Date, default: null },
+    datePaid: { type: Date, default: null }
     amount: { type: Number, default: 0 }
   },
   bills: [{
