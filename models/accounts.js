@@ -14,7 +14,7 @@ const AccountSchema = mongoose.Schema({
     isPaid: { type: Boolean, default: false },
     oneTime: { type: Boolean, default: false },
     dueDate: { type: Date, required: true },
-    datePaid: { type: Date, default: null }
+    datePaid: { type: Date, default: null },
     amount: { type: Number, default: 0 }
   },
   bills: [{
