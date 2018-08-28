@@ -117,5 +117,20 @@ router.post('/', (req, res) => {
 });
 
 
+/*
+NEW PUT ENDPOINT TO UPDATE A USER'S...
+
+settings tab
+
+username
+password
+firstName
+lastName
+
+evenetually cloudinary
+
+*/
+
+
 
 module.exports = { router };

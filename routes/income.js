@@ -18,16 +18,20 @@ router.use('/', jwtAuth);
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
+  // Validate Mongoose Object Id
+  const ids = [userId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
 
+  // All validations passed
   return Income
     .find({userId})
     .then(income => res.json(income))
@@ -41,24 +45,20 @@ router.get('/:id', (req, res, next) => {
   const userId = req.user.id;
   const incomeId = req.params.id;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!mongoose.Types.ObjectId.isValid(incomeId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `incomeId` is invalid';
-    err.location = 'incomeId';
-    err.status = 400;
-    return next(err);
-  }
+  // Validate Mongoose Object Id
+  const ids = [userId, incomeId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
 
+  // All validations passed
   return Income
     .findById(incomeId)
     .then(income => res.json(income))
@@ -72,24 +72,32 @@ router.post('/', (req, res, next) => {
   const userId = req.user.id;
   const { source, amount=0 } = req.body;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!source) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'Missing `source` in request body';
-    err.location = 'source';
-    err.status = 400;
-    return next(err);
+  // Validate fields in request body
+  const requiredFields = ['source', 'amount'];
+  const missingField = requiredFields.find(field => !(field in req.body));
+  if (missingField) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: `Missing field: ${missingField}`,
+      location: missingField
+    });
   }
 
+  // Validate Mongoose Object Id
+  const ids = [userId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
+  
+  // All validations passed
   const newIncome = {
     userId,
     source,
@@ -145,32 +153,32 @@ router.put('/:id', (req, res, next) => {
   const incomeId = req.params.id;
   const { source, amount=0 } = req.body;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!mongoose.Types.ObjectId.isValid(incomeId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `incomeId` is invalid';
-    err.location = 'incomeId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!source) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'Missing `source` in request body';
-    err.location = 'source';
-    err.status = 400;
-    return next(err);
+  // Validate fields in request body
+  const requiredFields = ['source', 'amount'];
+  const missingField = requiredFields.find(field => !(field in req.body));
+  if (missingField) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: `Missing field: ${missingField}`,
+      location: missingField
+    });
   }
 
+  // Validate Mongoose Object Id
+  const ids = [userId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
+
+  // All validations passed
   const updateIncome = {
     source,
     amount
@@ -233,24 +241,20 @@ router.delete('/:id', (req, res, next) => {
   const userId = req.user.id;
   const incomeId = req.params.id;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!mongoose.Types.ObjectId.isValid(incomeId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `incomeId` is invalid';
-    err.location = 'incomeId';
-    err.status = 400;
-    return next(err);
-  }
+  // Validate Mongoose Object Id
+  const ids = [userId, incomeId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
 
+  // All validations passed
   return Income
     .findOneAndRemove({_id: incomeId, userId})
     .then(() => res.sendStatus(204).end())

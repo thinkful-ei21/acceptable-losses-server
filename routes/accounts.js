@@ -19,16 +19,20 @@ router.use('/', jwtAuth);
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
+  // Validate Mongoose Object Id
+  const ids = [userId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
 
+  // All validations passed
   return Account
     .find({userId})
     .then(accounts => res.json(accounts))
@@ -42,24 +46,20 @@ router.get('/:id', (req, res, next) => {
   const userId = req.user.id;
   const accountId = req.params.id;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!mongoose.Types.ObjectId.isValid(accountId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `accountId` is invalid';
-    err.location = 'accountId';
-    err.status = 400;
-    return next(err);
-  }
+  // Validate Mongoose Object Id
+  const ids = [userId, accountId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
 
+  // All validations passed
   return Account
     .findById(accountId)
     .then(account => res.json(account))
@@ -103,46 +103,39 @@ router.get('/:id', (req, res, next) => {
 /* =============== POST (create) a new account ================ */
 router.post('/', (req, res, next) => {
   const userId = req.user.id;
-  const { name, url, amount=0, dueDate, frequency } = req.body;
+  const { name, url, amount=0, dueDate, frequency, reminder } = req.body;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!name) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'Missing `name` in request body';
-    err.location = 'name';
-    err.status = 400;
-    return next(err);
-  }
-  if (!frequency) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'Missing `frequency` in request body';
-    err.location = 'frequency';
-    err.status = 400;
-    return next(err);
-  }
-  if (!dueDate) {
-    const err = new Error();
-    err.reason = 'ValidsationError';
-    err.message = 'Missing `dueDate` in request body';
-    err.location = 'dueDate';
-    err.status = 400;
-    return next(err);
+  // Validate fields in request body
+  const requiredFields = ['name', 'frequency', 'dueDate', 'reminder', 'amount'];
+  const missingField = requiredFields.find(field => !(field in req.body));
+  if (missingField) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: `Missing field: ${missingField}`,
+      location: missingField
+    });
   }
 
+  // Validate Mongoose Object Id
+  const ids = [userId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
+
+  // All validations passed
   const newAccount = {
     userId,
     name,
     url,
+    reminder,
     frequency,
     nextDue: { dueDate, amount },
     bills: [{
@@ -153,9 +146,6 @@ router.post('/', (req, res, next) => {
 
   return Account
     .create(newAccount)
-    .then(result => {
-      // create cron job in here for email notifications
-    })
     .then(result => res.json(result))
     .catch(err => {
       if (err.code === 11000) {
@@ -175,42 +165,34 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const userId = req.user.id;
   const accountId = req.params.id;
-  const { name, url=null, frequency } = req.body;
+  const { name, url=null, frequency, reminder } = req.body;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!mongoose.Types.ObjectId.isValid(accountId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `accountId` is invalid';
-    err.location = 'accountId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!name) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'Missing `name` in request body';
-    err.location = 'name';
-    err.status = 400;
-    return next(err);
-  }
-  if (!frequency) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'Missing `frequency` in request body';
-    err.location = 'frequency';
-    err.status = 400;
-    return next(err);
+  // Validate fields in request body
+  const requiredFields = ['name', 'frequency', 'reminder'];
+  const missingField = requiredFields.find(field => !(field in req.body));
+  if (missingField) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: `Missing field: ${missingField}`,
+      location: missingField
+    });
   }
 
+  // Validate Mongoose Object Id
+  const ids = [userId, accountId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
+
+  // All validation passed
   return Account
     .findById(accountId)
     .then(result => {
@@ -218,6 +200,7 @@ router.put('/:id', (req, res, next) => {
 
       account.name = name;
       account.url = url;
+      account.reminder = reminder;
       account.frequency = frequency;
 
       return account
@@ -244,24 +227,20 @@ router.put('/bills/:id', (req, res, next) => {
   const accountId = req.params.id;
   const { amount=0 } = req.body;
   
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!mongoose.Types.ObjectId.isValid(accountId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `accountId` is invalid';
-    err.location = 'accountId';
-    err.status = 400;
-    return next(err);
-  }
+  // Validate Mongoose Object Id
+  const ids = [userId, accountId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
 
+  // All validations passed
   return Account
     .findById(accountId)
     .then(result => {
@@ -307,24 +286,20 @@ router.delete('/:id', (req, res, next) => {
   const userId = req.user.id;
   const accountId = req.params.id;
 
-  /* Validate fields in request body */
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `userId` is missing or invalid';
-    err.location = 'userId';
-    err.status = 400;
-    return next(err);
-  }
-  if (!mongoose.Types.ObjectId.isValid(accountId)) {
-    const err = new Error();
-    err.reason = 'ValidationError';
-    err.message = 'The `accountId` is invalid';
-    err.location = 'accountId';
-    err.status = 400;
-    return next(err);
-  }
+  // Validate Mongoose Object Id
+  const ids = [userId, accountId];
+  ids.forEach(id => {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: `Missing field: ${id}`,
+        location: id
+      });
+    }
+  });
 
+  // All validations passed
   return Account
     .findOneAndRemove({_id: accountId, userId})
     .then(() => res.sendStatus(204).end())
