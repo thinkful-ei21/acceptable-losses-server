@@ -153,6 +153,9 @@ router.post('/', (req, res, next) => {
 
   return Account
     .create(newAccount)
+    .then(result => {
+      // create cron job in here for email notifications
+    })
     .then(result => res.json(result))
     .catch(err => {
       if (err.code === 11000) {
