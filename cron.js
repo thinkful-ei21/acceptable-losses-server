@@ -3,21 +3,47 @@ const CronJob = require('cron').CronJob;
 const moment = require('moment');
 
 const { Account } = require('./models/accounts.js');
-
-const buildCronTime = (aMoment) => {
-  let str = `${aMoment.seconds()} ${aMoment.minutes()} ${aMoment.hours()} ${aMoment.date()} * *`;
-  console.log(str);
+// reminder: ['no-reminder': null, 'day-before': -24 hours, 'same-day': -48 hours, 'week-before': -7 days]
+const buildCronTime = (account) => {
+	const currentBill = account.bills[account.bills.length-1];
+	let reminderDate = moment(currentBill.dueDate);
+	if(account.reminder === "no-reminder") {
+		return null;
+	} else if(account.reminder === "day-before") {
+		reminderDate.subtract(48, 'hours');
+	} else if(account.reminder === "same-day") {
+		reminderDate.subtract(24, 'hours');
+	} else if(account.reminder === "week-before") {
+		reminderDate.subtract(7, 'days');
+	} else {
+		return null;
+	}
+  let str = `${reminderDate.seconds()} ${reminderDate.minutes()} ${reminderDate.hours()} ${reminderDate.date()} * *`;
+  // console.log(str);
+  // console.log(reminderDate.format());
+  // console.log(`seconds: ${reminderDate.seconds()}`);
+  // console.log(`minutes: ${reminderDate.minutes()}`);
+  // console.log(`hours: ${reminderDate.hours()}`);
+  // console.log(`str: ${str}`);
+  return str;
 };
 
 const cronJobCreate = (account) => {
   // create cronjob here
   let count = 0;
   let job;
+  account.reminder = "same-day";
+  let now = moment();
+  now.add(1, 'days');
+  now.add(10, 'seconds');
+  account.bills[account.bills.length-1].dueDate = moment().add(10, 'seconds').add(24, 'hours').format();
+  // console.log(account.bills[account.bills.length-1].dueDate);
+  let cronTime = buildCronTime(account);
+  // return;
   // let timing = buildCronTime(account.bills[account.bills.length-1].dueDate);
   // while(count < 5) {
-  job = new CronJob('*/2 * * * * *', function() {
-    count++;
-    console.log(`Cron job tick #${count}! account name: ${/*account.name*/''}, time: ${moment()}`);
+  job = new CronJob(cronTime, function() {
+    console.log(`Single tick of the cron job executed! Reminder date: ${cronTime}`);
   }, null, true);
   job.start();
 };
