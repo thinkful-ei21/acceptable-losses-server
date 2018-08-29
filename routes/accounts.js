@@ -249,6 +249,7 @@ router.put('/bills/:id', (req, res, next) => {
       const currBill = result.bills[result.bills.length - 1];
       currBill.isPaid = true;
       currBill.datePaid = moment().format();
+      currBill.amount = amount;
 
       let interval;
       if (account.frequency === 'Monthly') {

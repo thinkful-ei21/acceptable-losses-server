@@ -53,13 +53,8 @@ router.post('/', (req, res) => {
   }
 
   const sizedFields = {
-    username: {
-      min: 1
-    },
-    password: {
-      min: 8, 
-      max: 72
-    }
+    username: {min: 1},
+    password: {min: 8, max: 72}
   };
   const tooSmallField = Object.keys(sizedFields).find(
     field =>
@@ -220,7 +215,7 @@ router.put('/password/:id', jwtAuth, (req, res, next) => {
       location: missingField
     });
   }
-  
+
   const stringFields = ['oldPassword', 'newPassword'];
   const nonStringField = stringFields.find(
     field => field in req.body && typeof req.body[field] !== 'string'
@@ -234,8 +229,8 @@ router.put('/password/:id', jwtAuth, (req, res, next) => {
     });
   }
 
-  const explicityTrimmedFields = ['oldPassword', 'newPassword'];
-  const nonTrimmedField = explicityTrimmedFields.find(
+  const trimmedFields = ['oldPassword', 'newPassword'];
+  const nonTrimmedField = trimmedFields.find(
     field => req.body[field].trim() !== req.body[field]
   );
   if (nonTrimmedField) {
@@ -248,10 +243,7 @@ router.put('/password/:id', jwtAuth, (req, res, next) => {
   }
 
   const sizedFields = {
-    newPassword: {
-      min: 8, 
-      max: 72
-    }
+    newPassword: {min: 8, max: 72}
   };
   const tooSmallField = Object.keys(sizedFields).find(
     field =>
