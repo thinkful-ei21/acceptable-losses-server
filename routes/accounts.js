@@ -143,6 +143,7 @@ router.post('/', (req, res, next) => {
       amount
     }]
   };
+  // logic for creating cron job goes here
 
   return Account
     .create(newAccount)
