@@ -119,8 +119,8 @@ router.post('/', (req, res) => {
 
 
 /* === PUT (update) username, firstName, and lastName of an existing user === */
-router.put('/settings/:id', jwtAuth, (req, res, next) => {
-  const userId = req.params.id;
+router.put('/settings', jwtAuth, (req, res, next) => {
+  const userId = req.user.id;
   let { username, firstName='', lastName='' } = req.body;
   firstName = firstName.trim();
   lastName = lastName.trim();
@@ -200,8 +200,8 @@ router.put('/settings/:id', jwtAuth, (req, res, next) => {
 
 
 /* =============== PUT (update) password of an existing user ================ */
-router.put('/password/:id', jwtAuth, (req, res, next) => {
-  const userId = req.params.id;
+router.put('/password', jwtAuth, (req, res, next) => {
+  const userId = req.user.id;
   const { oldPassword, newPassword } = req.body;
 
   // Validate fields in request body
