@@ -6,20 +6,19 @@ const cloudinary = require('cloudinary');
 
 const router = express.Router();
 
-const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
-
-
-
-// post
-router.post('/', jwtAuth, (req, res) => {
-  const images = Object.values(req.files).map(file => file.path);
-  const promises = images.map(image => cloudinary.uploader.upload(image));
-  
-  Promise
-    .all(promises)
-    .then(results => res.json(results));
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
 });
 
+const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 
+router.post('/', jwtAuth, (req, res) => {
+  cloudinary.uploader
+    .upload(req.files.fileName.path)
+    .then(results => res.json(results))
+    .catch(err => console.log(err));
+});
 
 module.exports = { router };

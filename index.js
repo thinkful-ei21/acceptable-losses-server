@@ -79,11 +79,13 @@ function runServer(port = PORT) {
 }
 
 if (require.main === module) {
-  dbConnect().then(() => {
-    return Account.find();
-  }).then(accounts => {
-    sendMail(accounts[0]);
-  });
+  dbConnect()
+    .then(() => {
+      return Account.find();
+    })
+    .then(accounts => {
+      sendMail(accounts[0]);
+    });
   runServer();
 }
 
