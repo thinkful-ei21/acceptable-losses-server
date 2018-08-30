@@ -2,6 +2,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const formData = require('express-form-data');
 const cors = require('cors');
 const morgan = require('morgan');
 const passport = require('passport');
@@ -17,9 +18,11 @@ const { router: usersRouter } = require('./routes/users.js');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./passport/index.js');
 const { router: accountsRouter } = require('./routes/accounts.js');
 const { router: incomeRouter } = require('./routes/income.js');
+const { router: imageRouter } = require('./routes/uploads.js');
 
 const app = express();
 app.use(express.json());
+app.use(formData.parse());
 
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
@@ -42,6 +45,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/income', incomeRouter);
+app.use('/api/image-upload', imageRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
