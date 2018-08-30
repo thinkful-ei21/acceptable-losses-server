@@ -19,7 +19,7 @@ const send = (account) => {
   User.findById(account.userId)
     .then(user => {
       // pass this into mail options, can populate using client data
-      user.username = "imussg@gmail.com";
+      user.username = "shrouded.stream@gmail.com";
       const mailOptions = {
         from: 'shrouded.stream@gmail.com',
         to: user.username,

@@ -8,12 +8,10 @@ const router = express.Router();
 
 const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 
-router.use('/', jwtAuth);
-
 
 
 // post
-router.post('/', (req, res) => {
+router.post('/', jwtAuth, (req, res) => {
   const images = Object.values(req.files).map(file => file.path);
   const promises = images.map(image => cloudinary.uploader.upload(image));
   
@@ -24,4 +22,4 @@ router.post('/', (req, res) => {
 
 
 
-module.eports = { router };
+module.exports = { router };
