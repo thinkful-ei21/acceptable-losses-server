@@ -20,17 +20,14 @@ router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
   // Validate Mongoose Object Id
-  const ids = [userId];
-  ids.forEach(id => {
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({
-        code: 422,
-        reason: 'ValidationError',
-        message: `Missing field: ${id}`,
-        location: id
-      });
-    }
-  });
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Missing field: userId',
+      location: 'userId'
+    });
+  }
 
   // All validations passed
   return Account
@@ -134,17 +131,14 @@ router.post('/', (req, res, next) => {
   }
 
   // Validate Mongoose Object Id
-  const ids = [userId];
-  ids.forEach(id => {
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({
-        code: 422,
-        reason: 'ValidationError',
-        message: `Missing field: ${id}`,
-        location: id
-      });
-    }
-  });
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Missing field: userId',
+      location: 'userId'
+    });
+  }
 
   // All validations passed
   const newAccount = {

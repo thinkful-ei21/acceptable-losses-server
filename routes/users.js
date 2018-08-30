@@ -169,7 +169,7 @@ router.put('/settings', jwtAuth, (req, res, next) => {
       code: 422,
       reason: 'ValidationError',
       message: 'Missing field: userId',
-      location: userId
+      location: 'userId'
     });
   }
 
@@ -286,7 +286,7 @@ router.put('/password', jwtAuth, (req, res, next) => {
       code: 422,
       reason: 'ValidationError',
       message: 'Missing field: userId',
-      location: userId
+      location: 'userId'
     });
   }
 
@@ -330,7 +330,7 @@ router.delete('/delete', jwtAuth, (req, res, next) => {
       code: 422,
       reason: 'ValidationError',
       message: 'Missing field: userId',
-      location: userId
+      location: 'userId'
     });
   }
 

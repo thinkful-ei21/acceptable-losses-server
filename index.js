@@ -18,7 +18,7 @@ const { router: usersRouter } = require('./routes/users.js');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./passport/index.js');
 const { router: accountsRouter } = require('./routes/accounts.js');
 const { router: incomeRouter } = require('./routes/income.js');
-const { router: imageRouter } = require('./routes/uploads.js');
+const { router: imageRouter } = require('./routes/images.js');
 
 const app = express();
 app.use(express.json());
@@ -45,7 +45,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/income', incomeRouter);
-app.use('/api/image-upload', imageRouter);
+app.use('/api/images', imageRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {

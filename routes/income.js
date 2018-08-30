@@ -19,17 +19,14 @@ router.get('/', (req, res, next) => {
   const userId = req.user.id;
 
   // Validate Mongoose Object Id
-  const ids = [userId];
-  ids.forEach(id => {
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({
-        code: 422,
-        reason: 'ValidationError',
-        message: `Missing field: ${id}`,
-        location: id
-      });
-    }
-  });
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Missing field: userId',
+      location: 'userId'
+    });
+  }
 
   // All validations passed
   return Income
@@ -101,17 +98,14 @@ router.post('/', (req, res, next) => {
   }
 
   // Validate Mongoose Object Id
-  const ids = [userId];
-  ids.forEach(id => {
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(422).json({
-        code: 422,
-        reason: 'ValidationError',
-        message: `Missing field: ${id}`,
-        location: id
-      });
-    }
-  });
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Missing field: userId',
+      location: 'userId'
+    });
+  }
   
   // All validations passed
   const newIncome = {
@@ -148,7 +142,7 @@ router.post('/', (req, res, next) => {
   // original way to create if mongoose compound index works
   // return Income
   //   .create(newIncome)
-  //   .then(income => res.json(income))
+  //   .then(income => res.status(201).json(income))
   //   .catch(err => {
   //     if (err.code === 11000) {
   //       err = new Error();
@@ -182,7 +176,7 @@ router.put('/:id', (req, res, next) => {
   }
 
   // Validate Mongoose Object Id
-  const ids = [userId];
+  const ids = [userId, incomeId];
   ids.forEach(id => {
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return res.status(422).json({

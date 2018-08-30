@@ -7,7 +7,7 @@ const { Account }  = require ('./models/accounts.js');
 const { User } = require('./models/users.js');
 
 const send = (account) => {
-    // our account
+  // our account
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -15,20 +15,22 @@ const send = (account) => {
       pass: 'thanosdidnothingwrong'
     }
   });
+
   const dueDate = moment(account.bills[account.bills.length-1].dueDate);
+
   User.findById(account.userId)
     .then(user => {
       // pass this into mail options, can populate using client data
-      user.username = "shrouded.stream@gmail.com";
+      user.username = 'shrouded.stream@gmail.com';
       const mailOptions = {
         from: 'shrouded.stream@gmail.com',
         to: user.username,
-        subject: `Reminder! Your bill for ${account.name} is due on ${dueDate.format("m/d/YYYY")}`,
-        text: `Dear ${user.firstName||"user" + " " + user.lastName||""},\n\tYou have a bill due on ${dueDate.format("m/d/YYYY")} for ${account.name}.  Once you pay this bill revisit the app to record your payment.\n\nSincerely,\nAcceptable Losses Staff`
+        subject: `Reminder! Your bill for ${account.name} is due on ${dueDate.format('mm/dd/yyyy')}`,
+        text: `Dear ${user.firstName||'user' + ' ' + user.lastName||''},\n\tYou have a bill due on ${dueDate.format('mm/dd/yyyy')} for ${account.name}.  Once you pay this bill revisit the app to record your payment.\n\nSincerely,\nAcceptable Losses Staff`
       };
       console.log(mailOptions);
       // actual function call to send mail
-      transporter.sendMail(mailOptions, function(error, info){
+      transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
           console.log(error);
         } else {
@@ -36,7 +38,7 @@ const send = (account) => {
         }
       });
     });
-}
+};
 
 // Account.find()
 //   .then(accounts => {

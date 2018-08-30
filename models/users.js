@@ -13,7 +13,11 @@ const UserSchema = mongoose.Schema({
   },
   password: { type: String, required: true },
   firstName: { type: String, default: '' },
-  lastName: { type: String, default: '' }
+  lastName: { type: String, default: '' },
+  profilePic: {
+    public_id: { type: String, default: '' },
+    secure_url: { type: String, default: '' }
+  }
 });
 
 // Customize output for `res.json(data)`, `console.log(data)` etc.
