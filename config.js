@@ -7,4 +7,7 @@ module.exports = {
   TEST_DATABASE_URL:process.env.TEST_DATABASE_URL || 'mongodb://localhost/acceptablelosses',
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRY: process.env.JWT_EXPIRY || '7d',
+  CLOUD_NAME: process.env.CLOUD_NAME, 
+  API_KEY: process.env.API_KEY, 
+  API_SECRET: process.env.API_SECRET
 };

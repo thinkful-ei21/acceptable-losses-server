@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 
 const { User } = require('../models/users.js');
+const { Account } = require('../models/accounts.js');
+const { Income } = require('../models/income.js');
 
 const router = express.Router();
 
@@ -305,6 +307,41 @@ router.put('/password', jwtAuth, (req, res, next) => {
     })
     .then(password => User.findByIdAndUpdate(userId, { password }, {new: true}))
     .then(user => res.status(201).json(user))
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
+});
+
+
+
+/* === DELETE (remove) an existing user and all related data === */
+router.delete('/delete', jwtAuth, (req, res, next) => {
+  const userId = req.user.id;
+
+  // Validate Mongoose Object Id
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Missing field: userId',
+      location: userId
+    });
+  }
+
+  // All validations passed
+  const accountRemovePromise = Account.remove({ userId });
+  const incomeRemovePromise = Income.remove({ userId });
+  const userRemovePromise = User.findByIdAndRemove(userId);
+
+  return Promise
+    .all([accountRemovePromise, incomeRemovePromise, userRemovePromise])
+    .then(res.status(204).end())
     .catch(err => {
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);

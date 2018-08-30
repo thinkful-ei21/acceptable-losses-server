@@ -35,7 +35,15 @@ router.get('/', (req, res, next) => {
   return Income
     .find({userId})
     .then(income => res.json(income))
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
 });
 
 
@@ -62,7 +70,15 @@ router.get('/:id', (req, res, next) => {
   return Income
     .findById(incomeId)
     .then(income => res.json(income))
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
 });
 
 
@@ -258,7 +274,15 @@ router.delete('/:id', (req, res, next) => {
   return Income
     .findOneAndRemove({_id: incomeId, userId})
     .then(() => res.sendStatus(204).end())
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
 });
 
 

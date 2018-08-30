@@ -36,7 +36,15 @@ router.get('/', (req, res, next) => {
   return Account
     .find({userId})
     .then(accounts => res.json(accounts))
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
 });
 
 
@@ -63,7 +71,15 @@ router.get('/:id', (req, res, next) => {
   return Account
     .findById(accountId)
     .then(account => res.json(account))
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
 });
 
 
@@ -278,7 +294,15 @@ router.put('/bills/:id', (req, res, next) => {
         .save()
         .then(account => res.status(201).json(account));
     })
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
 });
 
 
@@ -305,7 +329,15 @@ router.delete('/:id', (req, res, next) => {
   return Account
     .findOneAndRemove({_id: accountId, userId})
     .then(() => res.sendStatus(204).end())
-    .catch(err => next(err));
+    .catch(err => {
+      if (err.reason === 'ValidationError') {
+        return res.status(err.code).json(err);
+      }
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error'
+      });
+    });
 });
 
 
