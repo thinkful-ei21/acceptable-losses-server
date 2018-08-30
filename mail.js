@@ -1,34 +1,54 @@
 'use strict';
 
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 
-// our account
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'shrouded.stream@gmail.com',
-    pass: 'thanosdidnothingwrong'
-  }
-});
+const { Account }  = require ('./models/accounts.js');
+const { User } = require('./models/users.js');
 
-// pass this into mail options, can populate using client data
-const mailOptions = {
-  from: 'shrouded.stream@gmail.com',
-  to: 'thesundaymailman@gmail.com',
-  subject: 'Test Sending Email via Node.js',
-  text: 'Of all the texts I have sent this year, this is definitely one of them.'
+const send = (account) => {
+    // our account
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'shrouded.stream@gmail.com',
+      pass: 'thanosdidnothingwrong'
+    }
+  });
+  const dueDate = moment(account.bills[account.bills.length-1].dueDate);
+  User.findById(account.userId)
+    .then(user => {
+      // pass this into mail options, can populate using client data
+      user.username = "imussg@gmail.com";
+      const mailOptions = {
+        from: 'shrouded.stream@gmail.com',
+        to: user.username,
+        subject: `Reminder! Your bill for ${account.name} is due on ${dueDate.format("m/d/YYYY")}`,
+        text: `Dear ${user.firstName||"user" + " " + user.lastName||""},\n\tYou have a bill due on ${dueDate.format("m/d/YYYY")} for ${account.name}.  Once you pay this bill revisit the app to record your payment.\n\nSincerely,\nAcceptable Losses Staff`
+      };
+      console.log(mailOptions);
+      // actual function call to send mail
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+    });
+}
+
+// Account.find()
+//   .then(accounts => {
+//     console.log("something");
+//     const account = accounts[0];
+//     // account.username = "imussg@gmail.com";
+//     return send(account);
+//   }).catch(err => console.log("something happened"));
+
+module.exports = {
+  sendMail: send
 };
-
-// actual function call to send mail
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-  }
-});
-
-
 
 /* SAMPLE CODE SNIPPIT VIA NODEMAILER.COM
 

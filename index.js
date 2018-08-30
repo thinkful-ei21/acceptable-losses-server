@@ -10,6 +10,7 @@ const { PORT, CLIENT_ORIGIN } = require('./config.js');
 const { dbConnect } = require('./db-mongoose');
 const { Account } = require('./models/accounts.js');
 const { cronJobCreate } = require('./cron.js');
+const { sendMail } = require('./mail.js');
 // const { dbConnect } = require('./db-knex');
 
 const { router: usersRouter } = require('./routes/users.js');
@@ -77,7 +78,7 @@ if (require.main === module) {
   dbConnect().then(() => {
     return Account.find();
   }).then(accounts => {
-    cronJobCreate(accounts[0]);
+    sendMail(accounts[0]);
   });
   runServer();
 }

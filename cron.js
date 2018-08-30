@@ -1,6 +1,7 @@
 'use strict';
 const CronJob = require('cron').CronJob;
 const moment = require('moment');
+const { sendMail } = require('./mail.js');
 
 const { Account } = require('./models/accounts.js');
 // reminder: ['no-reminder': null, 'day-before': -24 hours, 'same-day': -48 hours, 'week-before': -7 days]
@@ -27,7 +28,7 @@ const buildCronTime = (account) => {
   // console.log(`str: ${str}`);
   return str;
 };
-
+// delete user, username will be email address
 const cronJobCreate = (account) => {
   // create cronjob here
   let count = 0;
