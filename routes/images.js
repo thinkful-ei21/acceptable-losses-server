@@ -34,19 +34,27 @@ router.post('/upload', (req, res, next) => {
       location: 'userId'
     });
   }
-
+  let oldPublicId;
+  return User.findById(userId)
+    .then(user => {
+      oldPublicId = user.profilePic.public_id !== "" ? user.profilePic.public_id : null;
+    })
+    .then(() => {
   // All validations passed
-  cloudinary.uploader
-    .upload(req.files.fileName.path)
+      cloudinary.uploader
+        .upload(req.files.fileName.path)
+    })
     .then(result => {
       const { public_id, secure_url } = result;
       const profilePic = { public_id, secure_url };
       return User.findByIdAndUpdate(userId, { profilePic }, {new: true});
     })
     .then(user => {
-      // const { public_id, secure_url } = user.profilePic;
-      // const result = { public_id, secure_url };
-      // return res.status(201).json(result);
+      if(oldPublicId) {
+        cloudinary.uploader
+          .destroy(oldPublicId)
+          .then(() => res.status(201).json(user))
+      }
       return res.status(201).json(user);
     })
     .catch(err => {
