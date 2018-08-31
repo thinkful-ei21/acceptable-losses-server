@@ -41,7 +41,7 @@ router.post('/upload', (req, res, next) => {
     .then(result => {
       const { public_id, secure_url } = result;
       const profilePic = { public_id, secure_url };
-      return User.findByIdAndUpdate(userId, profilePic, {new: true});
+      return User.findByIdAndUpdate(userId, { profilePic }, {new: true});
     })
     .then(user => {
       const { public_id, secure_url } = user.profilePic;
@@ -80,12 +80,11 @@ router.delete('/delete', (req, res, next) => {
   cloudinary.uploader
     .destroy(public_id)
     .then(result => {
-      console.log(result);
       const profilePic = {
         public_id: '',
         secure_url: ''
       };
-      return User.findByIdAndUpdate(userId, profilePic, {new: true});
+      return User.findByIdAndUpdate(userId, { profilePic }, {new: true});
     })
     .then(user => res.status(201).json(user))
     .catch(err => {
