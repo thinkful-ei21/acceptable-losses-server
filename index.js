@@ -73,7 +73,7 @@ app.use((err, req, res, next) => {
     if (process.env.NODE_ENV === 'development') {
       console.error(err);
     }
-    console.err(err);
+    console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });

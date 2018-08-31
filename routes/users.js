@@ -3,12 +3,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const cloudinary = require('cloudinary');
 
 const { User } = require('../models/users.js');
 const { Account } = require('../models/accounts.js');
 const { Income } = require('../models/income.js');
 
 const router = express.Router();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+});
 
 const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 
@@ -344,9 +351,22 @@ router.delete('/delete', jwtAuth, (req, res, next) => {
   const incomeRemovePromise = Income.remove({ userId });
   const userRemovePromise = User.findByIdAndRemove(userId);
 
-  return Promise
-    .all([accountRemovePromise, incomeRemovePromise, userRemovePromise])
-    .then(res.status(204).end())
+  const deleteActions = [accountRemovePromise, incomeRemovePromise, userRemovePromise];
+
+  return User
+    .findById(userId)
+    .then(user => {
+      const publicId = user.profilePic.public_id ? user.profilePic.public_id : '';
+      const userPicRemovePromise = cloudinary.uploader.destroy(publicId);
+
+      if (publicId) {
+        deleteActions.push(userPicRemovePromise);
+      }
+
+      return Promise
+        .all(deleteActions)
+        .then(res.status(204).end());
+    })
     .catch(err => {
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);

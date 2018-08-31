@@ -29,10 +29,12 @@ router.post('/login', localAuth, (req, res) => {
 const jwtAuth = passport.authenticate('jwt', {session: false});
 
 router.post('/refresh', jwtAuth, (req, res) => {
-  User.findById(req.user.id).then(user => {
-    const authToken = createAuthToken(user);
-    return res.json({ authToken });
-  });
+  User
+    .findById(req.user.id)
+    .then(user => {
+      const authToken = createAuthToken(user);
+      return res.json({ authToken });
+    });
 });
 
 module.exports = {router};

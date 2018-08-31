@@ -37,8 +37,9 @@ router.post('/upload', (req, res, next) => {
 
   // All validations passed
   let oldPublicId;
-  return User.findById(userId)
-    .then(user => oldPublicId = user.profilePic.public_id !== '' ? user.profilePic.public_id : null)
+  return User
+    .findById(userId)
+    .then(user => oldPublicId = user.profilePic.public_id ? user.profilePic.public_id : '')
     .then(() => cloudinary.uploader.upload(req.files.fileName.path))
     .then(result => {
       const { public_id, secure_url } = result;
@@ -46,7 +47,7 @@ router.post('/upload', (req, res, next) => {
       return User.findByIdAndUpdate(userId, { profilePic }, {new: true});
     })
     .then(user => {
-      if(oldPublicId) {
+      if (oldPublicId) {
         cloudinary.uploader
           .destroy(oldPublicId)
           .then(() => res.status(201).json(user));
