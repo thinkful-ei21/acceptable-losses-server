@@ -85,6 +85,10 @@ router.post('/', (req, res) => {
   let { username, password, firstName = '', lastName = '' } = req.body;
   firstName = firstName.trim();
   lastName = lastName.trim();
+  let profilePic = {
+    public_id: '',
+    secure_url: ''
+  };
 
   return User
     .find({ username })
@@ -104,7 +108,8 @@ router.post('/', (req, res) => {
       username,
       password: hash,
       firstName,
-      lastName
+      lastName,
+      profilePic
     }))
     .then(user => res.status(201).json(user))
     .catch(err => {
