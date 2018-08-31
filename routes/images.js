@@ -44,9 +44,10 @@ router.post('/upload', (req, res, next) => {
       return User.findByIdAndUpdate(userId, { profilePic }, {new: true});
     })
     .then(user => {
-      const { public_id, secure_url } = user.profilePic;
-      const result = { public_id, secure_url };
-      return res.status(201).json(result);
+      // const { public_id, secure_url } = user.profilePic;
+      // const result = { public_id, secure_url };
+      // return res.status(201).json(result);
+      return res.status(201).json(user);
     })
     .catch(err => {
       if (err.reason === 'ValidationError') {

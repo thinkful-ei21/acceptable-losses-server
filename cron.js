@@ -8,13 +8,13 @@ const { Account } = require('./models/accounts.js');
 const buildCronTime = (account) => {
 	const currentBill = account.bills[account.bills.length-1];
 	let reminderDate = moment(currentBill.dueDate);
-	if(account.reminder === "no-reminder") {
+	if(account.reminder === "No Reminder") {
 		return null;
-	} else if(account.reminder === "day-before") {
+	} else if(account.reminder === "Day Before") {
 		reminderDate.subtract(48, 'hours');
-	} else if(account.reminder === "same-day") {
+	} else if(account.reminder === "Same Day") {
 		reminderDate.subtract(24, 'hours');
-	} else if(account.reminder === "week-before") {
+	} else if(account.reminder === "Week Before") {
 		reminderDate.subtract(7, 'days');
 	} else {
 		return null;
@@ -33,7 +33,7 @@ const cronJobCreate = (account) => {
   // create cronjob here
   let count = 0;
   let job;
-  account.reminder = "same-day";
+  account.reminder = "Same Day";
   let now = moment();
   now.add(1, 'days');
   now.add(10, 'seconds');
@@ -45,18 +45,23 @@ const cronJobCreate = (account) => {
   // while(count < 5) {
   job = new CronJob(cronTime, function() {
   	// create and send email logic here
-    console.log(`Single tick of the cron job executed! Reminder date: ${cronTime}`);
+
+    // console.log(`Single tick of the cron job executed! Reminder date: ${cronTime}`);
   }, null, true);
   job.start();
 };
 
-Account
-  .find()
-  .then(accounts => console.log('printing something at least'));
+// Account
+//   .find()
+//   .then(accounts => console.log('printing something at least'));
 // console.log();
 // cronJobCreate(Account.find());
 // buildCronTime(moment());
 
-const cronJobRebatch = () => {};
+const cronJobRebatch = (accounts) => {
+  accounts.forEach(account => {
+    cronJobCreate(account);
+  });
+};
 
 module.exports = {cronJobRebatch, cronJobCreate};
