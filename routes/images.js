@@ -34,16 +34,12 @@ router.post('/upload', (req, res, next) => {
       location: 'userId'
     });
   }
+
+  // All validations passed
   let oldPublicId;
   return User.findById(userId)
-    .then(user => {
-      oldPublicId = user.profilePic.public_id !== "" ? user.profilePic.public_id : null;
-    })
-    .then(() => {
-  // All validations passed
-      cloudinary.uploader
-        .upload(req.files.fileName.path)
-    })
+    .then(user => oldPublicId = user.profilePic.public_id !== '' ? user.profilePic.public_id : null)
+    .then(() => cloudinary.uploader.upload(req.files.fileName.path))
     .then(result => {
       const { public_id, secure_url } = result;
       const profilePic = { public_id, secure_url };
@@ -53,7 +49,7 @@ router.post('/upload', (req, res, next) => {
       if(oldPublicId) {
         cloudinary.uploader
           .destroy(oldPublicId)
-          .then(() => res.status(201).json(user))
+          .then(() => res.status(201).json(user));
       }
       return res.status(201).json(user);
     })
@@ -88,7 +84,7 @@ router.delete('/delete', (req, res, next) => {
   // All validations passed
   cloudinary.uploader
     .destroy(public_id)
-    .then(result => {
+    .then(() => {
       const profilePic = {
         public_id: '',
         secure_url: ''
