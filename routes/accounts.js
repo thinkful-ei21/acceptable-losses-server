@@ -259,7 +259,7 @@ router.put('/bills/:id', (req, res, next) => {
 
       const currBill = result.bills[result.bills.length - 1];
       currBill.isPaid = true;
-      currBill.datePaid = moment().format();
+      currBill.datePaid = moment().format('MM-DD-YYYY');
       currBill.amount = amount;
 
       let interval;
@@ -277,7 +277,7 @@ router.put('/bills/:id', (req, res, next) => {
       }
 
       const newBill = {
-        dueDate: moment(currBill.dueDate).add(interval, 'month'),
+        dueDate: moment(currBill.dueDate).add(interval, 'month').format('MM-DD-YYYY'),
         amount
       };
 

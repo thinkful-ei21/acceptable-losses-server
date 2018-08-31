@@ -16,7 +16,7 @@ const send = (account) => {
     }
   });
 
-  const dueDate = moment(account.bills[account.bills.length-1].dueDate);
+  // const dueDate = moment(account.nextDue.dueDate).format('MM-DD-YYYY');
 
   // User.findById(account.userId)
   //   .then(user => {
