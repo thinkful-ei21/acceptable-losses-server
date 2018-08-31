@@ -4,22 +4,18 @@
 
 sample add date: 2018-01-01T12:00:00-07:00
 
-username: floridaman02
+username: floridaman01
 password: password123
-userId: 5b8628bedd40590d64887bd0
+userId: 5b8973bb189b5924a56dd1a7
 
-username: floridaman03
+username: 
 password: password456
-userId: 5b863dcfbcfb240f2c34c707
-
-username: floridaman04
-password: password123
-userId: 5b8658f0beeebc108b86a6bd
+userId: 
 
 */
 
 /*
-Sample
+Sample Response from cloudinary upon successful upload
 { public_id: 'cq3cdq9khscgnlchxrvj', <--- need this
   version: 1535657906,
   signature: '31c443048ae695b8ee98561a40df9adfb69652a8',
