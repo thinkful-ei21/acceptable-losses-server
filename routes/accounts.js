@@ -116,7 +116,8 @@ router.get('/:id', (req, res, next) => {
 /* =============== POST (create) a new account ================ */
 router.post('/', (req, res, next) => {
   const userId = req.user.id;
-  const { name, url, amount=0, dueDate, frequency, reminder } = req.body;
+  const { name, amount=0, dueDate, frequency, reminder } = req.body;
+  let { url } = req.body;
 
   // Validate fields in request body
   const requiredFields = ['name', 'frequency', 'dueDate', 'reminder', 'amount'];
@@ -128,6 +129,39 @@ router.post('/', (req, res, next) => {
       message: `Missing field: ${missingField}`,
       location: missingField
     });
+  }
+
+  const stringFields = ['name', 'frequency', 'dueDate', 'reminder', 'url'];
+  const nonStringField = stringFields.find(
+    field => field in req.body && typeof req.body[field] !== 'string'
+  );
+  if (nonStringField) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Incorrect field type: expected string',
+      location: nonStringField
+    });
+  }
+
+  // Ensure URL starts with http:// or https://
+  // if there is a url and it's not valid, prepend
+  // if there is no url, this won't run
+  const validUrl = value => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(value) ? true : false;
+  if (url && !validUrl(url)) {
+    if (validUrl('http://' + url)) {
+      url = 'http://' + url;
+    } else {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: 'Url provided is invalid',
+        location: 'url'
+      });
+    }
+  }
+  if (!url) {
+    url = '';
   }
 
   // Validate Mongoose Object Id
@@ -176,7 +210,8 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const userId = req.user.id;
   const accountId = req.params.id;
-  const { name, url=null, frequency, reminder } = req.body;
+  const { name, frequency, reminder } = req.body;
+  let { url } = req.body;
 
   // Validate fields in request body
   const requiredFields = ['name', 'frequency', 'reminder'];
@@ -188,6 +223,26 @@ router.put('/:id', (req, res, next) => {
       message: `Missing field: ${missingField}`,
       location: missingField
     });
+  }
+
+  // Ensure URL starts with http:// or https://
+  // if there is a url and it's not valid, prepend
+  // if there is no url, this won't run
+  const validUrl = value => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(value) ? true : false;
+  if (url && !validUrl(url)) {
+    if (validUrl('http://' + url)) {
+      url = 'http://' + url;
+    } else {
+      return res.status(422).json({
+        code: 422,
+        reason: 'ValidationError',
+        message: 'Url provided is invalid',
+        location: 'url'
+      });
+    }
+  }
+  if (!url) {
+    url = '';
   }
 
   // Validate Mongoose Object Id

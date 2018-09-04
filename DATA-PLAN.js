@@ -1,18 +1,31 @@
 'use strict';
 
-/*
+const moment = require('moment');
 
+
+/*
 sample add date: 2018-01-01T12:00:00-07:00
 
-username: floridaman01
-password: password123
-userId: 5b8973bb189b5924a56dd1a7
+{
+	"username": "bruce.wayne@wayne_enterprises.org",
+	"password": "password123",
+	"firstName": "Bruce",
+	"lastName": "Wayne"
+}
 
-username: 
-password: password456
-userId: 
-
+{
+  "profilePic": {
+    "public_id": "",
+    "secure_url": ""
+  },
+  "firstName": "Bruce",
+  "lastName": "Wayne",
+  "username": "bruce.wayne@wayne_enterprises.org",
+  "id": "5b8ec9eef6a29504d3495b31"
+}
 */
+
+
 
 /*
 Sample Response from cloudinary upon successful upload
@@ -33,3 +46,39 @@ Sample Response from cloudinary upon successful upload
   secure_url: 'https://res.cloudinary.com/shroudedstream/image/upload/v1535657906/cq3cdq9khscgnlchxrvj.png', <-- need this
   original_filename: '7QcpQjIJp2G0NGd7S__rN1Nc' }
 */
+
+/*
+Uses a regular expression (regex) to check whether it looks enough like an email address
+
+^\S+@\S+$
+^ Matches the start the text
+\S+ Matches one or more non-whitespace characters before the @
+@ A literal at sign
+\S+ Matches one or more non-whitespace characters after the @
+$ Matches the end of the text
+
+[\w-]+@([\w-]+\.)+[\w-]+
+Simple email validator expression
+Matches joe@aol.com | a@b.c
+
+^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$
+Another validattion for proper email format
+Matches: bob-smith@foo.com | bob.smith@foo.net | bob_smith@foo.edu
+Non-matches: -smith@foo.com | .smith@foo.com | smith@foo_com
+*/
+
+// const validEmail = value => /^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(value) ? true : false;
+// console.log(validEmail('bruce.wayne@wayne_enterprises.com'));
+
+/*
+Regex if you want to ensure URL starts with HTTP/HTTPS:
+https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
+*/
+
+// const validUrl = value => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(value) ? true : false;
+// console.log(validUrl('http://imussg@gmail'));
+
+const currBill = { dueDate: ''};
+const interval = 1;
+
+moment(currBill.dueDate).add(interval, 'month').format('MM-DD-YYYY')

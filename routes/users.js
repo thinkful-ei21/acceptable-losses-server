@@ -88,6 +88,19 @@ router.post('/', (req, res) => {
     });
   }
 
+  // Email validation regex
+  // Matches: bob-smith@foo.com | bob.smith@foo.net | bob_smith@foo.edu
+  // Non-matches: -smith@foo.com | .smith@foo.com | smith@foo_com
+  const validEmail = value => /^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/.test(value) ? true : false;
+  if (!validEmail(req.body.username)) {
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Invalid email format',
+      location: 'username'
+    });
+  }
+
   // All validations passed
   let { username, password, firstName = '', lastName = '' } = req.body;
   firstName = firstName.trim();
