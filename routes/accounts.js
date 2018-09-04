@@ -144,7 +144,7 @@ router.post('/', (req, res, next) => {
     });
   }
 
-  // Ensure URL starts with http:// or https://
+  // Ensure URL starts with 'http://' or 'https://'
   // if there is a url and it's not valid, prepend
   // if there is no url, this won't run
   const validUrl = value => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(value) ? true : false;
@@ -225,7 +225,7 @@ router.put('/:id', (req, res, next) => {
     });
   }
 
-  // Ensure URL starts with http:// or https://
+  // Ensure URL starts with 'http://' or 'https://'
   // if there is a url and it's not valid, prepend
   // if there is no url, this won't run
   const validUrl = value => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(value) ? true : false;
