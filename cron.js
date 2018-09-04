@@ -28,6 +28,7 @@ const buildCronTime = (account) => {
   // console.log(`str: ${str}`);
   return str;
 };
+const cronJobs = [];
 // delete user, username will be email address
 const cronJobCreate = (account) => {
   // create cronjob here
@@ -45,11 +46,24 @@ const cronJobCreate = (account) => {
   // while(count < 5) {
   job = new CronJob(cronTime, function() {
   	// create and send email logic here
-
+    sendMail(account);
     // console.log(`Single tick of the cron job executed! Reminder date: ${cronTime}`);
   }, null, true);
+  let rep = [account.id, job];
+  cronJobs.push(rep);
   job.start();
 };
+
+const updateCronJob = (account) => {
+  let existing = cronJobs.forEach(cronJob => {
+    const newCronJobList = [];
+    let cronJobFound = false;
+    if(account.id !== cronJob[0]) {
+      newCronJobList.push(cronJob);
+    }
+  });
+  cronJobs = [...newCronJobList, cronJobCreate(account)];
+}
 
 // Account
 //   .find()
@@ -64,4 +78,4 @@ const cronJobRebatch = (accounts) => {
   });
 };
 
-module.exports = {cronJobRebatch, cronJobCreate};
+module.exports = {cronJobRebatch, cronJobCreate, updateCronJob};
