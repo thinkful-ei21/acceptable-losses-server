@@ -313,6 +313,7 @@ router.put('/bills/:id', (req, res, next) => {
       const account = result;
 
       const currBill = result.bills[result.bills.length - 1];
+
       currBill.isPaid = true;
       currBill.datePaid = moment().format('MM-DD-YYYY');
       currBill.amount = amount;
@@ -330,14 +331,16 @@ router.put('/bills/:id', (req, res, next) => {
       if (account.frequency === 'Annually') {
         interval = 12;
       }
-
-      const newBill = {
-        dueDate: moment(currBill.dueDate).add(interval, 'month').format('MM-DD-YYYY'),
-        amount
-      };
-
-      account.bills = [...account.bills, newBill];
-      account.nextDue = newBill;
+      if (account.frequency === 'One Time') {
+        account.nextDue = null;
+      } else {
+        const newBill = {
+          dueDate: moment(currBill.dueDate).add(interval, 'month').format('MM-DD-YYYY'),
+          amount
+        };
+        account.bills = [...account.bills, newBill];
+        account.nextDue = newBill;
+      }
 
       return account
         .save()
@@ -347,6 +350,7 @@ router.put('/bills/:id', (req, res, next) => {
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
+      console.log(err);
       res.status(500).json({
         code: 500,
         message: 'Internal server error'

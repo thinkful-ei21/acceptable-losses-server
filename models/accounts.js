@@ -12,15 +12,13 @@ const AccountSchema = mongoose.Schema({
   reminder: { type: String, default: null },
   nextDue: {
     isPaid: { type: Boolean, default: false },
-    oneTime: { type: Boolean, default: false },
-    dueDate: { type: String, required: true },
+    dueDate: { type: String, default: '' },
     datePaid: { type: String, default: null },
     amount: { type: Number, default: 0 }
   },
   bills: [{
     isPaid: { type: Boolean, default: false },
-    oneTime: { type: Boolean, default: false },
-    dueDate: { type: String, required: true },
+    dueDate: { type: String, default: '' },
     datePaid: { type: String, default: null },
     amount: { type: Number, default: 0 }
   }]
