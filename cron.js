@@ -4,13 +4,13 @@ const moment = require('moment');
 const { sendMail } = require('./mail.js');
 
 const { Account } = require('./models/accounts.js');
-// reminder: ['no-reminder': null, 'day-before': -24 hours, 'same-day': -48 hours, 'week-before': -7 days]
+
+let cronJobs = [];
+
 const buildCronTime = (account) => {
 	const currentBill = account.bills[account.bills.length-1];
 	let reminderDate = moment(currentBill.dueDate);
-	if(account.reminder === "No Reminder") {
-		return null;
-	} else if(account.reminder === "Day Before") {
+	if(account.reminder === "Day Before") {
 		reminderDate.subtract(48, 'hours');
 	} else if(account.reminder === "Same Day") {
 		reminderDate.subtract(24, 'hours');
@@ -19,63 +19,49 @@ const buildCronTime = (account) => {
 	} else {
 		return null;
 	}
-  let str = `${reminderDate.seconds()} ${reminderDate.minutes()} ${reminderDate.hours()} ${reminderDate.date()} * *`;
-  // console.log(str);
-  // console.log(reminderDate.format());
-  // console.log(`seconds: ${reminderDate.seconds()}`);
-  // console.log(`minutes: ${reminderDate.minutes()}`);
-  // console.log(`hours: ${reminderDate.hours()}`);
-  // console.log(`str: ${str}`);
+  let str = `${reminderDate.seconds()} ${reminderDate.minutes()} ${reminderDate.hours()} ${reminderDate.date()} ${reminderDate.month()} *`;
+  console.log(str);
   return str;
 };
-const cronJobs = [];
-// delete user, username will be email address
+
 const cronJobCreate = (account) => {
-  // create cronjob here
-  let count = 0;
   let job;
-  account.reminder = "Same Day";
-  let now = moment();
-  now.add(1, 'days');
-  now.add(10, 'seconds');
-  account.bills[account.bills.length-1].dueDate = moment().add(10, 'seconds').add(24, 'hours').format();
+  let due = moment(account.bills[account.bills.length-1].dueDate);
+  let reminderTime = moment();
+  reminderTime = reminderTime.month(due.month()).date(due.date()).year(due.year());
+  account.bills[account.bills.length-1].dueDate = reminderTime.format();
+  // account.reminder = "Same Day";
+  // account.bills[account.bills.length-1].dueDate = moment().add(10, 'seconds').add(24, 'hours').format();
   // console.log(account.bills[account.bills.length-1].dueDate);
   let cronTime = buildCronTime(account);
-  // return;
-  // let timing = buildCronTime(account.bills[account.bills.length-1].dueDate);
-  // while(count < 5) {
+  account.bills[account.bills.length-1].dueDate = reminderTime.format('MM-DD-YYYY');
+  
   job = new CronJob(cronTime, function() {
-  	// create and send email logic here
     sendMail(account);
-    // console.log(`Single tick of the cron job executed! Reminder date: ${cronTime}`);
   }, null, true);
-  let rep = [account.id, job];
-  cronJobs.push(rep);
   job.start();
+  
+  // record the cron jobs created so that many cron jobs can run on server at once
+  cronJobs.push( [account.id, job] );
 };
 
 const updateCronJob = (account) => {
+  let newCronJobList = [];
   let existing = cronJobs.forEach(cronJob => {
-    const newCronJobList = [];
-    let cronJobFound = false;
     if(account.id !== cronJob[0]) {
       newCronJobList.push(cronJob);
     }
   });
-  cronJobs = [...newCronJobList, cronJobCreate(account)];
+  cronJobs = [...newCronJobList];
+  // console.log(cronJobs);
+  return cronJobCreate(account);
 }
-
-// Account
-//   .find()
-//   .then(accounts => console.log('printing something at least'));
-// console.log();
-// cronJobCreate(Account.find());
-// buildCronTime(moment());
 
 const cronJobRebatch = (accounts) => {
   accounts.forEach(account => {
     cronJobCreate(account);
   });
+  console.log(cronJobs);
 };
 
 module.exports = {cronJobRebatch, cronJobCreate, updateCronJob};
