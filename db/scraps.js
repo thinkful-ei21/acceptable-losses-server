@@ -1,7 +1,14 @@
 'use strict';
 
-const moment = require('moment');
+const bcrypt = require('bcryptjs');
 
+function getHash(password) {
+  return bcrypt
+    .hash(password, 10)
+    .then(hash => console.log(hash));
+}
+
+getHash('password123');
 
 /*
 sample add date: 2018-01-01T12:00:00-07:00
@@ -76,9 +83,4 @@ https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+
 */
 
 // const validUrl = value => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(value) ? true : false;
-// console.log(validUrl('http://imussg@gmail'));
-
-const currBill = { dueDate: ''};
-const interval = 1;
-
-moment(currBill.dueDate).add(interval, 'month').format('MM-DD-YYYY')
+// console.log(validUrl('http://user@email'));

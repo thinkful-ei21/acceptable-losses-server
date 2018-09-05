@@ -1,0 +1,127 @@
+[
+  {
+    "userId": "111111111111111111111100",
+    "name": "Monthly Expense",
+    "url": "",
+    "frequency": "Monthly",
+    "reminder": "No Reminder",
+    "nextDue": {
+      "isPaid": false,
+      "dueDate": "01-28-2018",
+      "datePaid": null,
+      "amount": 100
+    },
+    "bills": [
+      {
+        "isPaid": false,
+        "dueDate": "01-28-2018",
+        "datePaid": null,
+        "amount": 100,
+        "_id": "333333333333333333333300"
+      }
+    ],
+    "createdAt": "2018-01-01T00:00:00.000Z",
+    "updatedAt": "2018-01-01T00:00:00.000Z",
+    "_id": "222222222222222222222200"
+  },
+  {
+    "userId": "111111111111111111111100",
+    "name": "Quarterly Expense",
+    "url": "",
+    "frequency": "Quarterly",
+    "reminder": "No Reminder",
+    "nextDue": {
+      "isPaid": false,
+      "dueDate": "03-15-2018",
+      "datePaid": null,
+      "amount": 200
+    },
+    "bills": [
+      {
+        "isPaid": false,
+        "dueDate": "03-15-2018",
+        "datePaid": null,
+        "amount": 200,
+        "_id": "333333333333333333333300"
+      }
+    ],
+    "createdAt": "2018-01-01T00:00:00.000Z",
+    "updatedAt": "2018-01-01T00:00:00.000Z",
+    "_id": "222222222222222222222201"
+  },
+  {
+    "userId": "111111111111111111111100",
+    "name": "Semi-annual Expense",
+    "url": "",
+    "frequency": "Semi-Annually",
+    "reminder": "No Reminder",
+    "nextDue": {
+      "isPaid": false,
+      "dueDate": "06-30-2018",
+      "datePaid": null,
+      "amount": 300
+    },
+    "bills": [
+      {
+        "isPaid": false,
+        "dueDate": "06-30-2018",
+        "datePaid": null,
+        "amount": 300,
+        "_id": "333333333333333333333300"
+      }
+    ],
+    "createdAt": "2018-01-01T00:00:00.000Z",
+    "updatedAt": "2018-01-01T00:00:00.000Z",
+    "_id": "222222222222222222222202"
+  },
+  {
+    "userId": "111111111111111111111100",
+    "name": "Annual Expense",
+    "url": "",
+    "frequency": "Annually",
+    "reminder": "No Reminder",
+    "nextDue": {
+      "isPaid": false,
+      "dueDate": "01-01-2018",
+      "datePaid": null,
+      "amount": 400
+    },
+    "bills": [
+      {
+        "isPaid": false,
+        "dueDate": "01-01-2018",
+        "datePaid": null,
+        "amount": 400,
+        "_id": "333333333333333333333300"
+      }
+    ],
+    "createdAt": "2018-01-01T00:00:00.000Z",
+    "updatedAt": "2018-01-01T00:00:00.000Z",
+    "_id": "222222222222222222222203"
+  },
+  {
+    "userId": "111111111111111111111100",
+    "name": "One-time Expense",
+    "url": "",
+    "frequency": "One Time",
+    "reminder": "No Reminder",
+    "nextDue": {
+      "isPaid": false,
+      "dueDate": "01-31-2018",
+      "datePaid": null,
+      "amount": 10
+    },
+    "bills": [
+      {
+        "isPaid": false,
+        "dueDate": "01-31-2018",
+        "datePaid": null,
+        "amount": 10,
+        "_id": "333333333333333333333300"
+      }
+    ],
+    "createdAt": "2018-01-01T00:00:00.000Z",
+    "updatedAt": "2018-01-01T00:00:00.000Z",
+    "_id": "222222222222222222222204"
+  }
+]

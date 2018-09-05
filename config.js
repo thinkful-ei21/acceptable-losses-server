@@ -9,5 +9,8 @@ module.exports = {
   JWT_EXPIRY: process.env.JWT_EXPIRY || '7d',
   CLOUD_NAME: process.env.CLOUD_NAME, 
   API_KEY: process.env.API_KEY, 
-  API_SECRET: process.env.API_SECRET
+  API_SECRET: process.env.API_SECRET,
+  EMAIL_SERVICE: process.env.EMAIL_SERVICE,
+  EMAIL_USER: process.env.EMAIL_USER,
+  EMAIL_PASS: process.env.EMAIL_PASS
 };

@@ -192,8 +192,8 @@ router.post('/', (req, res, next) => {
   return Account
     .create(newAccount)
     .then(result => {
-      if(reminder !== "No Reminder") {
-        console.log("a new cron job should have been created");
+      if (reminder !== 'No Reminder') {
+        console.log('a new cron job should have been created');
         cronJobCreate(newAccount);
       }
       return result;
@@ -274,7 +274,7 @@ router.put('/:id', (req, res, next) => {
       account.url = url;
       account.reminder = reminder;
       account.frequency = frequency;
-      if(dueDate && amount) {
+      if (dueDate && amount) {
         account.bills[account.bills.length-1].dueDate = dueDate;
         account.bills[account.bills.length-1].amount = amount;
         account.nextDue.dueDate = dueDate;
@@ -283,7 +283,7 @@ router.put('/:id', (req, res, next) => {
       return account
         .save()
         .then(account => {
-          if(account.reminder !== "No Reminder") {
+          if (account.reminder !== 'No Reminder') {
             updateCronJob(account);
           }
           return account;

@@ -20,6 +20,9 @@ const UserSchema = mongoose.Schema({
   }
 });
 
+// Add `createdAt` and `updatedAt` fields
+UserSchema.set('timestamps', true);
+
 // Customize output for `res.json(data)`, `console.log(data)` etc.
 UserSchema.set('toObject', {
   virtuals: true,     

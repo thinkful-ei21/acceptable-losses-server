@@ -16,12 +16,14 @@ const AccountSchema = mongoose.Schema({
     datePaid: { type: String, default: null },
     amount: { type: Number, default: 0 }
   },
-  bills: [{
-    isPaid: { type: Boolean, default: false },
-    dueDate: { type: String, default: '' },
-    datePaid: { type: String, default: null },
-    amount: { type: Number, default: 0 }
-  }]
+  bills: [
+    {
+      isPaid: { type: Boolean, default: false },
+      dueDate: { type: String, default: '' },
+      datePaid: { type: String, default: null },
+      amount: { type: Number, default: 0 }
+    }
+  ]
 });
 
 // Compound index, this makes sure that unique account name applies to only one user

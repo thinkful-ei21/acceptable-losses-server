@@ -6,13 +6,15 @@ const moment = require('moment');
 const { Account }  = require ('./models/accounts.js');
 const { User } = require('./models/users.js');
 
-const send = (account) => {
+const { EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS } = require('./config.js');
+
+const send = account => {
   // our account
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: EMAIL_SERVICE,
     auth: {
-      user: 'shrouded.stream@gmail.com',
-      pass: 'thanosdidnothingwrong'
+      user: EMAIL_USER,
+      pass: EMAIL_PASS
     }
   });
 
@@ -52,7 +54,11 @@ module.exports = {
   sendMail: send
 };
 
-/* SAMPLE CODE SNIPPIT VIA NODEMAILER.COM
+
+
+/*
+
+SAMPLE CODE SNIPPIT VIA NODEMAILER.COM
 
 // Generate test SMTP service account from ethereal.email
 // Only needed if you don't have a real mail account for testing
