@@ -6,6 +6,7 @@ const passport = require('passport');
 const moment = require('moment');
 
 const { Account } = require('../models/accounts.js');
+const { cronJobCreate, updateCronJob } = require('../cron.js');
 
 const router = express.Router();
 
@@ -188,7 +189,9 @@ router.post('/', (req, res, next) => {
     }]
   };
   // logic for creating cron job goes here
-
+  if(reminder !== "No Reminder") {
+    cronJobCreate(newAccount);
+  }
   return Account
     .create(newAccount)
     .then(result => res.json(result))
@@ -210,7 +213,7 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const userId = req.user.id;
   const accountId = req.params.id;
-  const { name, frequency, reminder } = req.body;
+  const { name, frequency, reminder, dueDate, amount } = req.body;
   let { url } = req.body;
 
   // Validate fields in request body
@@ -257,7 +260,6 @@ router.put('/:id', (req, res, next) => {
       });
     }
   });
-
   // All validation passed
   return Account
     .findById(accountId)
@@ -268,7 +270,15 @@ router.put('/:id', (req, res, next) => {
       account.url = url;
       account.reminder = reminder;
       account.frequency = frequency;
-
+      if(account.reminder !== "No Reminder") {
+        updateCronJob(account);
+      }
+      if(dueDate && amount) {
+        account.bills[account.bills.length-1].dueDate = dueDate;
+        account.bills[account.bills.length-1].amount = amount;
+        account.nextDue.dueDate = dueDate;
+        account.nextDue.amount = amount;
+      }
       return account
         .save()
         .then(account => res.status(201).json(account));

@@ -10,7 +10,7 @@ const passport = require('passport');
 const { PORT, CLIENT_ORIGIN } = require('./config.js');
 const { dbConnect } = require('./db-mongoose');
 const { Account } = require('./models/accounts.js');
-const { cronJobCreate } = require('./cron.js');
+const { cronJobRebatch } = require('./cron.js');
 const { sendMail } = require('./mail.js');
 // const { dbConnect } = require('./db-knex');
 
@@ -95,7 +95,8 @@ if (require.main === module) {
       return Account.find();
     })
     .then(accounts => {
-      sendMail(accounts[0]);
+      // cronJobRebatch(accounts);
+      // sendMail(accounts[0]);
     });
   runServer();
 }
