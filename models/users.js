@@ -25,10 +25,10 @@ UserSchema.set('timestamps', true);
 
 // Customize output for `res.json(data)`, `console.log(data)` etc.
 UserSchema.set('toObject', {
-  virtuals: true,     
-  versionKey: false,  
+  virtuals: true,
+  versionKey: false,
   transform: (doc, ret) => {
-    delete ret._id; 
+    delete ret._id;
     delete ret.password;
   }
 });
