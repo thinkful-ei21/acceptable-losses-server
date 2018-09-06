@@ -19,7 +19,6 @@ const buildCronTime = account => {
   } else if (account.reminder === 'Week Before') {
     reminderDate.subtract(7, 'days');
   } else {
-    console.log("it's gunna return null");
     return null;
   }
 

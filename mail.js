@@ -31,7 +31,7 @@ const send = account => {
         subject: `Reminder! Your bill for ${account.name} is due on ${dueDate}`,
         text: `Dear ${user.firstName||'user' + ' ' + user.lastName||''},\n\tYou have a bill due on ${dueDate} for ${account.name}.  Once you pay this bill revisit the app to record your payment.\n\nSincerely,\nAcceptable Losses Staff`
       };
-      console.log(mailOptions);
+      // console.log(mailOptions);
       // actual function call to send mail
       transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
