@@ -6,7 +6,7 @@ const passport = require('passport');
 const moment = require('moment');
 
 const { Account } = require('../models/accounts.js');
-const { cronJobCreate, updateCronJob } = require('../cron.js');
+const { cronJobCreate, updateCronJob, deleteCronJob, cronJobsDisplay } = require('../cron.js');
 
 const router = express.Router();
 
@@ -33,7 +33,11 @@ router.get('/', (req, res, next) => {
   // All validations passed
   return Account
     .find({userId})
-    .then(accounts => res.json(accounts))
+    .then(accounts => {
+      cronJobsDisplay();
+      console.log("something should print above me");
+      return res.json(accounts);
+    })
     .catch(err => {
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
@@ -191,12 +195,12 @@ router.post('/', (req, res, next) => {
   // logic for creating cron job goes here
   return Account
     .create(newAccount)
-    .then(result => {
+    .then(account => {
       if (reminder !== 'No Reminder') {
-        console.log('a new cron job should have been created');
+        // console.log('a new cron job should have been created');
         cronJobCreate(newAccount);
       }
-      return result;
+      return account.save();
     })
     .then(result => res.json(result))
     .catch(err => {
@@ -394,10 +398,10 @@ router.delete('/:id', (req, res, next) => {
       });
     }
   });
-
   // All validations passed
   return Account
     .findOneAndRemove({_id: accountId, userId})
+    .then(() => deleteCronJob(accountId))
     .then(() => res.sendStatus(204).end())
     .catch(err => {
       if (err.reason === 'ValidationError') {
@@ -409,7 +413,5 @@ router.delete('/:id', (req, res, next) => {
       });
     });
 });
-
-
 
 module.exports = { router };

@@ -93,11 +93,10 @@ if (require.main === module) {
   dbConnect()
     .then(() => {
       return Account.find();
+    })
+    .then(accounts => {
+      cronJobRebatch(accounts);
     });
-    // .then(accounts => {
-      // cronJobRebatch(accounts);
-      // sendMail(accounts[0]);
-    // });
   runServer();
 }
 
