@@ -23,7 +23,8 @@ const AccountSchema = mongoose.Schema({
       datePaid: { type: String, default: null },
       amount: { type: Number, default: 0 }
     }
-  ]
+  ],
+  fireCronJob: { type: Boolean, default: true }
 });
 
 // Compound index, this makes sure that unique account name applies to only one user

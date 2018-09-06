@@ -92,7 +92,7 @@ function runServer(port = PORT) {
 if (require.main === module) {
   dbConnect()
     .then(() => {
-      return Account.find();
+      return Account.find({});
     })
     .then(accounts => {
       cronJobRebatch(accounts);

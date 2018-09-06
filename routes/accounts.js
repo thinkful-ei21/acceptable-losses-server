@@ -34,7 +34,7 @@ router.get('/', (req, res, next) => {
   return Account
     .find({userId})
     .then(accounts => {
-      cronJobsDisplay();
+      console.log(cronJobsDisplay());
       console.log("something should print above me");
       return res.json(accounts);
     })
@@ -192,13 +192,16 @@ router.post('/', (req, res, next) => {
       amount
     }]
   };
+  if(reminder === "No Reminder") {
+    newAccount.fireCronJob = false;
+  }
   // logic for creating cron job goes here
   return Account
     .create(newAccount)
     .then(account => {
       if (reminder !== 'No Reminder') {
         // console.log('a new cron job should have been created');
-        cronJobCreate(newAccount);
+        cronJobCreate(account);
       }
       return account.save();
     })
@@ -283,6 +286,9 @@ router.put('/:id', (req, res, next) => {
         account.bills[account.bills.length-1].amount = amount;
         account.nextDue.dueDate = dueDate;
         account.nextDue.amount = amount;
+      }
+      if(reminder === "No Reminder") {
+        account.fireCronJob = false;
       }
       return account
         .save()

@@ -11,6 +11,7 @@ let cronJobs = [];
 const buildCronTime = account => {
   const currentBill = account.bills[account.bills.length-1];
   let reminderDate = moment(currentBill.dueDate);
+  // console.log(`${reminderDate} something`);
   if (account.reminder === 'Day Before') {
     reminderDate.subtract(48, 'hours');
   } else if (account.reminder === 'Same Day') {
@@ -18,10 +19,12 @@ const buildCronTime = account => {
   } else if (account.reminder === 'Week Before') {
     reminderDate.subtract(7, 'days');
   } else {
+    console.log("it's gunna return null");
     return null;
   }
+
   let str = `${reminderDate.seconds()} ${reminderDate.minutes()} ${reminderDate.hours()} ${reminderDate.date()} ${reminderDate.month()} *`;
-  console.log(str);
+  // console.log(`${str} hello`);
   return str;
 };
 
@@ -30,23 +33,32 @@ const cronJobCreate = account => {
   let due = moment(account.bills[account.bills.length-1].dueDate);
   let reminderTime = moment();
   reminderTime = reminderTime.month(due.month()).date(due.date()).year(due.year()).add(10, 'seconds');
+  // console.log(reminderTime);
   account.bills[account.bills.length-1].dueDate = reminderTime.format();
   // account.reminder = "Same Day";
   // account.bills[account.bills.length-1].dueDate = moment().add(10, 'seconds').add(24, 'hours').format();
   // console.log(account.bills[account.bills.length-1].dueDate);
   let cronTime = buildCronTime(account);
+  if(!cronTime) {
+    return;
+  }
   account.bills[account.bills.length-1].dueDate = reminderTime.format('MM-DD-YYYY');
-
   job = new CronJob(cronTime, function() {
-    sendMail(account);
-  }, null, true);
+    Account.findById(account.id)
+      .then(account => {
+        if(account.fireCronJob) {
+          sendMail(account);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  });
   job.start();
   account.cronJob = job;
   // account.save();
   // record the cron jobs created so that many cron jobs can run on server at once
   cronJobs.push([account.id, job]);
-  console.log(cronJobs[0]);
-  console.log("a new job date should have been console logged");
   return job;
 };
 
@@ -74,9 +86,9 @@ const deleteCronJob = accountId => {
 
 const cronJobRebatch = accounts => {
   accounts.forEach(account => {
+    // console.log(`${account.name}, dueDate: ${account.bills[account.bills.length-1].dueDate||"no due date"}, reminder: ${account.reminder}`);
     cronJobCreate(account);
   });
-  // console.log(cronJobs);
 };
 
 const cronJobsDisplay = () => {

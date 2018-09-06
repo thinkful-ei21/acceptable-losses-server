@@ -10,6 +10,7 @@ const { EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS } = require('./config.js');
 
 const send = account => {
   // our account
+  console.log(EMAIL_SERVICE, EMAIL_USER);
   const transporter = nodemailer.createTransport({
     service: EMAIL_SERVICE,
     auth: {
