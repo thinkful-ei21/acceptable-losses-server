@@ -34,8 +34,8 @@ router.get('/', (req, res, next) => {
   return Account
     .find({userId})
     .then(accounts => {
-      console.log(cronJobsDisplay());
-      console.log("something should print above me");
+      // console.log(cronJobsDisplay());
+      // console.log("something should print above me");
       return res.json(accounts);
     })
     .catch(err => {
