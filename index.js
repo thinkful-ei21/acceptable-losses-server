@@ -1,6 +1,7 @@
 'use strict';
 
 require('dotenv').config();
+
 const express = require('express');
 const formData = require('express-form-data');
 const cors = require('cors');
@@ -11,7 +12,6 @@ const { PORT, CLIENT_ORIGIN } = require('./config.js');
 const { dbConnect } = require('./db-mongoose');
 const { Account } = require('./models/accounts.js');
 const { cronJobRebatch } = require('./cron.js');
-const { sendMail } = require('./mail.js');
 // const { dbConnect } = require('./db-knex');
 
 const { router: usersRouter } = require('./routes/users.js');
@@ -21,6 +21,7 @@ const { router: incomeRouter } = require('./routes/income.js');
 const { router: imageRouter } = require('./routes/images.js');
 
 const app = express();
+
 app.use(express.json());
 app.use(formData.parse());
 
@@ -31,20 +32,18 @@ app.use(
 );
 
 // CORS
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
-  }
-  next();
-});
-// app.use(
-//   cors({
-//     origin: CLIENT_ORIGIN
-//   })
-// );
+app.use(
+  cors({ origin: CLIENT_ORIGIN })
+);
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+//   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
+//   if (req.method === 'OPTIONS') {
+//     return res.sendStatus(204);
+//   }
+//   next();
+// });
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);

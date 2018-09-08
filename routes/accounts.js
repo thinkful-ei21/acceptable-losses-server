@@ -192,7 +192,7 @@ router.post('/', (req, res, next) => {
       amount
     }]
   };
-  if(reminder === "No Reminder") {
+  if (reminder === 'No Reminder') {
     newAccount.fireCronJob = false;
   }
   // logic for creating cron job goes here
@@ -287,7 +287,7 @@ router.put('/:id', (req, res, next) => {
         account.nextDue.dueDate = dueDate;
         account.nextDue.amount = amount;
       }
-      if(reminder === "No Reminder") {
+      if (reminder === 'No Reminder') {
         account.fireCronJob = false;
       }
       return account
