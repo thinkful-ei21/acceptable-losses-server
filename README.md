@@ -106,13 +106,14 @@ Income is used for comparison against expenses, and should be entered at the mon
 
 ## API Endpoints
 All requests and responses are in JSON format.
-| Action | Path |
-| --- | --- |
-| Users | https://acceptable-losses-server.herokuapp.com/api/users |
-| Authentication | https://acceptable-losses-server.herokuapp.com/api/auth |
-| Accounts | https://acceptable-losses-server.herokuapp.com/api/accounts |
-| Income | https://acceptable-losses-server.herokuapp.com/api/income |
-| Image upload | https://acceptable-losses-server.herokuapp.com/api/images |
+
+Action | Path |
+--- | --- |
+Users | https://acceptable-losses-server.herokuapp.com/api/users |
+Authentication | https://acceptable-losses-server.herokuapp.com/api/auth |
+Accounts | https://acceptable-losses-server.herokuapp.com/api/accounts |
+Income | https://acceptable-losses-server.herokuapp.com/api/income |
+Image upload | https://acceptable-losses-server.herokuapp.com/api/images |
 
 ### Users
 `POST` request to endpoint `/` is for creating user documents. It accepts the following request body,
